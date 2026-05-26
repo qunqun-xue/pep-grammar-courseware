@@ -1,0 +1,358 @@
+:root {
+  --bg-top: #f4fbff;
+  --bg-bottom: #fff9f0;
+  --ink-strong: #10304a;
+  --ink-body: #27445d;
+  --brand-main: #1f6feb;
+  --brand-aux: #25a66a;
+  --accent: #ffb43d;
+  --danger: #e15a52;
+  --card: #ffffff;
+  --line: #d4e4f1;
+  --shadow: 0 16px 36px rgba(30, 84, 122, 0.12);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Trebuchet MS", "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+  color: var(--ink-body);
+  background: linear-gradient(180deg, var(--bg-top), var(--bg-bottom));
+  min-height: 100vh;
+}
+
+.bg-layer {
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(circle at 10% 20%, rgba(43, 127, 255, 0.15), transparent 40%),
+    radial-gradient(circle at 85% 10%, rgba(66, 184, 131, 0.16), transparent 42%),
+    radial-gradient(circle at 70% 90%, rgba(255, 176, 32, 0.12), transparent 40%);
+  z-index: -1;
+}
+
+.app-shell {
+  width: min(1200px, 94vw);
+  margin: 20px auto 28px;
+}
+
+.topbar {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 18px 20px;
+  display: flex;
+  gap: 20px;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: var(--shadow);
+}
+
+.brand-kicker {
+  margin: 0 0 4px;
+  font-size: 12px;
+  letter-spacing: 1.1px;
+  color: var(--brand-main);
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.brand h1 {
+  margin: 0;
+  color: var(--ink-strong);
+  font-size: clamp(20px, 2.3vw, 30px);
+}
+
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.progress-text {
+  margin: 0;
+  color: var(--ink-strong);
+  font-weight: 700;
+}
+
+.ghost-btn {
+  border: 1px solid var(--brand-main);
+  color: var(--brand-main);
+  background: #f8fbff;
+  border-radius: 12px;
+  padding: 10px 14px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.ghost-btn:hover {
+  background: #ecf5ff;
+}
+
+.content-grid {
+  margin-top: 16px;
+  display: grid;
+  grid-template-columns: 290px 1fr;
+  gap: 16px;
+}
+
+.lesson-nav {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px 14px;
+  box-shadow: var(--shadow);
+  max-height: calc(100vh - 130px);
+  overflow: auto;
+}
+
+.nav-title {
+  margin: 0 0 12px;
+  font-weight: 700;
+  color: var(--ink-strong);
+}
+
+.lesson-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.lesson-link {
+  display: block;
+  width: 100%;
+  text-align: left;
+  border: 1px solid var(--line);
+  background: #fff;
+  border-radius: 12px;
+  padding: 10px;
+  cursor: pointer;
+  color: var(--ink-body);
+  font-size: 14px;
+}
+
+.lesson-link:hover {
+  border-color: var(--brand-main);
+}
+
+.lesson-link.active {
+  border-color: var(--brand-main);
+  background: #eef5ff;
+  color: var(--ink-strong);
+  font-weight: 700;
+}
+
+.lesson-main {
+  display: grid;
+  gap: 14px;
+}
+
+.scene-banner {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 12px;
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: 14px;
+  box-shadow: var(--shadow);
+}
+
+.scene-visual {
+  min-height: 132px;
+  position: relative;
+  border-radius: 14px;
+  overflow: hidden;
+  background: linear-gradient(140deg, #dcecff, #f6fff8);
+  border: 1px solid #c9ddef;
+}
+
+.scene-id {
+  position: absolute;
+  left: 12px;
+  bottom: 10px;
+  margin: 0;
+  font-size: 22px;
+  font-weight: 800;
+  color: #0f4166;
+  letter-spacing: 1px;
+}
+
+.blob {
+  position: absolute;
+  border-radius: 50%;
+}
+
+.blob-a {
+  width: 94px;
+  height: 94px;
+  background: rgba(31, 111, 235, 0.36);
+  top: -20px;
+  left: -20px;
+}
+
+.blob-b {
+  width: 120px;
+  height: 120px;
+  background: rgba(66, 184, 131, 0.32);
+  bottom: -38px;
+  right: -8px;
+}
+
+.blob-c {
+  width: 74px;
+  height: 74px;
+  background: rgba(255, 180, 61, 0.34);
+  top: 20px;
+  right: 32px;
+}
+
+.scene-meta {
+  padding: 6px 2px;
+}
+
+.scene-label {
+  margin: 0;
+  font-size: 13px;
+  color: var(--brand-main);
+  font-weight: 700;
+}
+
+.scene-prompt {
+  margin: 8px 0 0;
+  line-height: 1.55;
+  color: var(--ink-strong);
+}
+
+.lesson-paper {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: var(--shadow);
+}
+
+.lesson-header h2 {
+  margin: 4px 0 12px;
+  color: var(--ink-strong);
+  font-size: clamp(22px, 2.2vw, 30px);
+}
+
+.lesson-content {
+  display: grid;
+  gap: 12px;
+}
+
+.section-card {
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 12px 13px;
+  background: #fff;
+}
+
+.section-card h3 {
+  margin: 0 0 10px;
+  color: var(--ink-strong);
+  font-size: 18px;
+}
+
+.section-card p {
+  margin: 7px 0;
+  line-height: 1.6;
+}
+
+.section-card ul,
+.section-card ol {
+  margin: 8px 0 8px 22px;
+  padding: 0;
+  line-height: 1.6;
+}
+
+.section-card code {
+  background: #f2f7fd;
+  color: #14456a;
+  border: 1px solid #d5e5f3;
+  border-radius: 6px;
+  padding: 1px 6px;
+  font-family: Consolas, "Courier New", monospace;
+}
+
+.section-lessonmeta {
+  background: #f5fbff;
+}
+
+.section-warmupscene {
+  background: #f8fff7;
+}
+
+.section-rulecard {
+  background: #fffaf2;
+}
+
+.section-pitfallbox {
+  background: #fff7f6;
+  border-color: #f3cdc8;
+}
+
+.section-funmission {
+  background: #f4f1ff;
+}
+
+.section-exitticket {
+  background: #eef9ff;
+}
+
+.pager {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.page-btn {
+  flex: 1;
+  border: none;
+  border-radius: 12px;
+  padding: 12px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+  background: linear-gradient(120deg, var(--brand-main), #27a18e);
+  cursor: pointer;
+}
+
+.page-btn[disabled] {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+@media (max-width: 1000px) {
+  .content-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .lesson-nav {
+    max-height: 260px;
+  }
+}
+
+@media (max-width: 700px) {
+  .topbar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .topbar-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .scene-banner {
+    grid-template-columns: 1fr;
+  }
+}
+

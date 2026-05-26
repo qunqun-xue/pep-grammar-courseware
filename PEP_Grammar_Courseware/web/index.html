@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PEP 语法大冒险 · 小学高年级</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <div class="bg-layer" aria-hidden="true"></div>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand">
+        <p class="brand-kicker">Grammar Adventure</p>
+        <h1>PEP 小学高年级英语语法课件</h1>
+      </div>
+      <div class="topbar-actions">
+        <p id="progress-text" class="progress-text">L01 / L20</p>
+        <button id="copy-link-btn" class="ghost-btn" type="button">复制本课链接</button>
+      </div>
+    </header>
+
+    <div class="content-grid">
+      <aside class="lesson-nav">
+        <p class="nav-title">课程目录</p>
+        <ul id="lesson-list" class="lesson-list"></ul>
+      </aside>
+
+      <main class="lesson-main">
+        <section class="scene-banner">
+          <div class="scene-visual">
+            <div class="blob blob-a"></div>
+            <div class="blob blob-b"></div>
+            <div class="blob blob-c"></div>
+            <p id="scene-id" class="scene-id">L01</p>
+          </div>
+          <div class="scene-meta">
+            <p class="scene-label">情景图提示词</p>
+            <p id="scene-prompt" class="scene-prompt"></p>
+          </div>
+        </section>
+
+        <article class="lesson-paper">
+          <header class="lesson-header">
+            <h2 id="lesson-title"></h2>
+          </header>
+          <div id="lesson-content" class="lesson-content"></div>
+        </article>
+
+        <nav class="pager">
+          <button id="prev-btn" class="page-btn" type="button">上一课</button>
+          <button id="next-btn" class="page-btn" type="button">下一课</button>
+        </nav>
+      </main>
+    </div>
+  </div>
+
+  <script src="./lessons-data.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>
+
