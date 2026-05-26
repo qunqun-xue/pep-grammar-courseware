@@ -134,6 +134,10 @@ body {
   cursor: pointer;
   color: var(--ink-body);
   font-size: 14px;
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  align-items: center;
 }
 
 .lesson-link:hover {
@@ -144,6 +148,16 @@ body {
   border-color: var(--brand-main);
   background: #eef5ff;
   color: var(--ink-strong);
+  font-weight: 700;
+}
+
+.lesson-text {
+  flex: 1;
+}
+
+.done-mark {
+  font-size: 12px;
+  color: #1a8f5c;
   font-weight: 700;
 }
 
@@ -266,6 +280,280 @@ body {
   line-height: 1.6;
 }
 
+.section-studyflow {
+  background: #f3f9ff;
+}
+
+.study-steps {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.study-step {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  border: 1px solid #d1e4f4;
+  border-radius: 10px;
+  background: #fff;
+  padding: 8px 10px;
+}
+
+.done-btn {
+  margin-top: 10px;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(125deg, #1f6feb, #2bb38c);
+  color: #fff;
+  padding: 8px 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.goal-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 8px;
+}
+
+.goal-item {
+  border: 1px dashed #b7d2ea;
+  border-radius: 10px;
+  padding: 8px 10px;
+  background: #fff;
+}
+
+.goal-key {
+  color: #0f4f7d;
+  font-weight: 700;
+}
+
+.scene-desc {
+  color: #24567a;
+}
+
+.chat-list {
+  display: grid;
+  gap: 6px;
+}
+
+.chat-line {
+  border-radius: 10px;
+  background: #fff;
+  border: 1px solid #d9ebd5;
+  padding: 7px 10px;
+}
+
+.rule-list {
+  display: grid;
+  gap: 7px;
+}
+
+.rule-item {
+  background: #fff;
+  border: 1px solid #f0d9ad;
+  border-radius: 10px;
+  padding: 8px 10px;
+}
+
+.pit-grid {
+  display: grid;
+  gap: 8px;
+}
+
+.pit-item {
+  background: #fff;
+  border: 1px solid #f2c7c3;
+  border-radius: 10px;
+  padding: 8px 10px;
+}
+
+.section-practice {
+  background: #f9f9ff;
+}
+
+.section-autoquiz {
+  background: #f4fbff;
+  border-color: #bedaf3;
+}
+
+.quiz-toolbar {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin: 10px 0 8px;
+}
+
+.quiz-score {
+  margin: 0;
+  font-weight: 700;
+  color: #124f7a;
+}
+
+.quiz-tools {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.mini-btn {
+  border: none;
+  border-radius: 9px;
+  background: linear-gradient(120deg, #1f6feb, #26a08d);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 7px 11px;
+  cursor: pointer;
+}
+
+.mini-btn.light {
+  background: #eaf3ff;
+  color: #1d4d78;
+  border: 1px solid #c9def3;
+}
+
+.quiz-list {
+  display: grid;
+  gap: 10px;
+}
+
+.quiz-card {
+  background: #fff;
+  border: 1px solid #d7e8f7;
+  border-radius: 12px;
+  padding: 10px;
+}
+
+.quiz-title {
+  margin: 0 0 8px;
+  color: #133d62;
+  font-weight: 700;
+}
+
+.quiz-options {
+  display: grid;
+  gap: 7px;
+}
+
+.quiz-option {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  border: 1px solid #e4edf8;
+  border-radius: 9px;
+  padding: 7px 8px;
+}
+
+.quiz-option input {
+  margin-top: 3px;
+}
+
+.quiz-input,
+.quiz-textarea {
+  width: 100%;
+  border: 1px solid #bfd6ec;
+  border-radius: 8px;
+  padding: 8px 9px;
+  font-size: 14px;
+  color: #1d4568;
+  background: #fdfefe;
+}
+
+.quiz-textarea {
+  min-height: 88px;
+  resize: vertical;
+}
+
+.quiz-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+.quiz-feedback {
+  margin: 8px 0 0;
+  padding: 6px 8px;
+  border-radius: 7px;
+  background: #f2f5f9;
+  color: #3a5670;
+  font-weight: 600;
+}
+
+.quiz-feedback.correct {
+  background: #e8fbef;
+  color: #1c7e49;
+}
+
+.quiz-feedback.wrong {
+  background: #fff0ef;
+  color: #b94d44;
+}
+
+.quiz-answer {
+  margin: 7px 0 0;
+  color: #1c5582;
+  font-weight: 600;
+}
+
+.practice-block {
+  border: 1px solid #d7dcf2;
+  border-radius: 12px;
+  background: #fff;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.practice-block h4 {
+  margin: 0 0 8px;
+  color: #153f6b;
+}
+
+.practice-list {
+  display: grid;
+  gap: 8px;
+}
+
+.practice-item {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  border: 1px solid #e4eaf4;
+  border-radius: 9px;
+  padding: 7px 8px;
+}
+
+.practice-item input {
+  margin-top: 3px;
+}
+
+.selfcheck {
+  margin-top: 8px;
+  border-top: 1px dashed #d4deec;
+  padding-top: 6px;
+}
+
+.selfcheck summary {
+  cursor: pointer;
+  color: #1f5f95;
+  font-weight: 700;
+}
+
+.badge-line {
+  margin-top: 10px;
+  padding: 8px 10px;
+  border-radius: 9px;
+  background: #dff1ff;
+  border: 1px solid #b7dcfa;
+  color: #0f4f7d;
+  font-weight: 700;
+}
+
 .section-card ul,
 .section-card ol {
   margin: 8px 0 8px 22px;
@@ -300,7 +588,7 @@ body {
 }
 
 .section-funmission {
-  background: #f4f1ff;
+  background: #f3efff;
 }
 
 .section-exitticket {
@@ -355,4 +643,3 @@ body {
     grid-template-columns: 1fr;
   }
 }
-
