@@ -582,6 +582,25 @@ body {
   background: #fffaf2;
 }
 
+.section-teachertalk {
+  background: #f6f2ff;
+  border-color: #d9c8fb;
+}
+
+.teacher-talk-list {
+  display: grid;
+  gap: 8px;
+}
+
+.teacher-talk-item {
+  margin: 0;
+  padding: 9px 10px;
+  border-radius: 10px;
+  background: #fff;
+  border: 1px solid #ddd1f7;
+  line-height: 1.65;
+}
+
 .section-pitfallbox {
   background: #fff7f6;
   border-color: #f3cdc8;
