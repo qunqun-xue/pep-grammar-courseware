@@ -36,6 +36,7 @@
     LessonMeta: "今天你会",
     WarmupScene: "故事开场",
     RuleCard: "语法魔法卡",
+    TeacherTalk: "老师讲透",
     PitfallBox: "避坑雷达",
     PracticeA: "A关 拓展题（非自动批改）",
     PracticeB: "B关 拓展题（非自动批改）",
@@ -222,6 +223,18 @@
     ].join("");
   }
 
+  function renderTeacherTalk(lines) {
+    const bullets = parseBullets(lines);
+    return [
+      "<section class='section-card section-teachertalk'>",
+      `<h3>${sectionNameMap.TeacherTalk}</h3>`,
+      "<div class='teacher-talk-list'>",
+      bullets.map((item) => `<p class='teacher-talk-item'>${inlineFormat(item)}</p>`).join(""),
+      "</div>",
+      "</section>"
+    ].join("");
+  }
+
   function renderPitfall(lines) {
     const bullets = parseBullets(lines);
     const pairs = [];
@@ -392,6 +405,10 @@
       }
       if (section.heading === "RuleCard") {
         html.push(renderRule(section.lines));
+        return;
+      }
+      if (section.heading === "TeacherTalk") {
+        html.push(renderTeacherTalk(section.lines));
         return;
       }
       if (section.heading === "PitfallBox") {
