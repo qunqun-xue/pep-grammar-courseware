@@ -16,47 +16,71 @@
       </div>
       <div class="topbar-actions">
         <p id="progress-text" class="progress-text">L01 / L20</p>
-        <button id="copy-link-btn" class="ghost-btn" type="button">复制本课链接</button>
+        <button id="copy-link-btn" class="ghost-btn" type="button">复制当前链接</button>
       </div>
     </header>
 
-    <div class="content-grid">
-      <aside class="lesson-nav">
-        <p class="nav-title">课程目录</p>
-        <ul id="lesson-list" class="lesson-list"></ul>
-      </aside>
+    <nav class="main-tabs" aria-label="主菜单">
+      <button id="tab-learn" class="main-tab active" type="button">语法讲解</button>
+      <button id="tab-test" class="main-tab" type="button">语法测试</button>
+    </nav>
 
-      <main class="lesson-main">
-        <section class="scene-banner">
-          <div class="scene-visual">
-            <div class="blob blob-a"></div>
-            <div class="blob blob-b"></div>
-            <div class="blob blob-c"></div>
-            <p id="scene-id" class="scene-id">L01</p>
+    <section id="learn-view" class="view-panel">
+      <div class="content-grid">
+        <aside class="lesson-nav">
+          <p class="nav-title">课程目录</p>
+          <ul id="lesson-list" class="lesson-list"></ul>
+        </aside>
+
+        <main class="lesson-main">
+          <article class="lesson-paper">
+            <header class="lesson-header">
+              <h2 id="lesson-title"></h2>
+            </header>
+            <div id="lesson-content" class="lesson-content"></div>
+          </article>
+
+          <nav class="pager">
+            <button id="prev-btn" class="page-btn" type="button">上一课</button>
+            <button id="next-btn" class="page-btn" type="button">下一课</button>
+          </nav>
+        </main>
+      </div>
+    </section>
+
+    <section id="test-view" class="view-panel hidden">
+      <article class="test-shell">
+        <header class="test-header">
+          <h2>语法测试中心</h2>
+          <p>每次随机生成 20 题，全部完成后一次提交批改，错题会自动加入错题集。</p>
+        </header>
+
+        <nav class="sub-tabs" aria-label="测试菜单">
+          <button id="subtab-exam" class="sub-tab active" type="button">开始测试</button>
+          <button id="subtab-wrong" class="sub-tab" type="button">错题集</button>
+        </nav>
+
+        <section id="exam-panel" class="sub-panel">
+          <div class="test-actions">
+            <button id="generate-test-btn" class="mini-btn" type="button">随机生成20题</button>
+            <button id="submit-test-btn" class="mini-btn" type="button" disabled>提交整卷批改</button>
           </div>
-          <div class="scene-meta">
-            <p class="scene-label">情景图提示词</p>
-            <p id="scene-prompt" class="scene-prompt"></p>
-          </div>
+          <p id="test-summary" class="test-summary">点击“随机生成20题”开始测试。</p>
+          <div id="test-paper" class="test-paper"></div>
         </section>
 
-        <article class="lesson-paper">
-          <header class="lesson-header">
-            <h2 id="lesson-title"></h2>
-          </header>
-          <div id="lesson-content" class="lesson-content"></div>
-        </article>
-
-        <nav class="pager">
-          <button id="prev-btn" class="page-btn" type="button">上一课</button>
-          <button id="next-btn" class="page-btn" type="button">下一课</button>
-        </nav>
-      </main>
-    </div>
+        <section id="wrongbook-panel" class="sub-panel hidden">
+          <div class="test-actions">
+            <button id="clear-wrongbook-btn" class="mini-btn light" type="button">清空错题集</button>
+          </div>
+          <div id="wrongbook-list" class="wrongbook-list"></div>
+        </section>
+      </article>
+    </section>
   </div>
 
-  <script src="./lessons-data.js?v=20260527h"></script>
-  <script src="./quiz-bank.js?v=20260527h"></script>
-  <script src="./app.js?v=20260527h"></script>
+  <script src="./lessons-data.js?v=20260527j"></script>
+  <script src="./quiz-bank.js?v=20260527j"></script>
+  <script src="./app.js?v=20260527j"></script>
 </body>
 </html>

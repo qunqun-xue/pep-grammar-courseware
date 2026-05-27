@@ -720,3 +720,130 @@ body {
     grid-template-columns: 1fr;
   }
 }
+
+.main-tabs {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 10px;
+  box-shadow: var(--shadow);
+}
+
+.main-tab,
+.sub-tab {
+  border: 1px solid transparent;
+  border-radius: 12px;
+  background: #f6fbff;
+  color: var(--ink-strong);
+  padding: 11px 16px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.main-tab.active,
+.sub-tab.active {
+  background: linear-gradient(120deg, var(--brand-main), var(--brand-aux));
+  color: #fff;
+}
+
+.view-panel.hidden,
+.sub-panel.hidden {
+  display: none;
+}
+
+.test-shell {
+  margin-top: 16px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 18px;
+  box-shadow: var(--shadow);
+}
+
+.test-header p {
+  margin: 6px 0 0;
+  color: #35536e;
+}
+
+.sub-tabs {
+  display: flex;
+  gap: 10px;
+  margin: 14px 0;
+  flex-wrap: wrap;
+}
+
+.test-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.test-summary {
+  margin: 0 0 12px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: #f3f9ff;
+  border: 1px solid #d7e8f7;
+  color: #134066;
+  font-weight: 700;
+}
+
+.test-paper,
+.wrongbook-list {
+  display: grid;
+  gap: 12px;
+}
+
+.test-card,
+.wrongbook-card {
+  border: 1px solid #d7e8f7;
+  border-radius: 14px;
+  background: #fff;
+  padding: 12px;
+}
+
+.test-source,
+.wrongbook-source {
+  margin: 0 0 6px;
+  font-size: 12px;
+  color: #4d6780;
+  font-weight: 700;
+}
+
+.empty-state {
+  margin: 0;
+  padding: 18px 14px;
+  border-radius: 12px;
+  background: #f7fbff;
+  border: 1px dashed #bfd6ec;
+  color: #4a6780;
+  text-align: center;
+}
+
+.muted {
+  color: #7e92a8;
+}
+
+.hidden {
+  display: none !important;
+}
+
+@media (max-width: 700px) {
+  .main-tabs,
+  .sub-tabs,
+  .test-actions {
+    flex-direction: column;
+  }
+
+  .main-tab,
+  .sub-tab,
+  .mini-btn,
+  .ghost-btn,
+  .page-btn {
+    width: 100%;
+  }
+}
