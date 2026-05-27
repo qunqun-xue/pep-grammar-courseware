@@ -392,40 +392,37 @@
   function renderLessonHtml(lesson) {
     const sections = splitSections(lesson.markdown);
     const html = [];
+
+    const sectionMap = {};
+    sections.forEach((s) => { sectionMap[s.heading] = s; });
+
+    const sectionOrder = [
+      "RuleCard", "TeacherTalk", "LessonMeta", "WarmupScene",
+      "PitfallBox", "PracticeA", "PracticeB", "PracticeC",
+      "FunMission", "ExitTicket"
+    ];
+
+    // Keep core teaching explanation at the top before any quiz UI.
+    const headSections = ["RuleCard", "TeacherTalk"];
+    headSections.forEach((key) => {
+      const section = sectionMap[key];
+      if (!section) return;
+      if (key === "RuleCard") { html.push(renderRule(section.lines)); return; }
+      if (key === "TeacherTalk") { html.push(renderTeacherTalk(section.lines)); }
+    });
+
     html.push(renderQuizSection(lesson.id));
 
-    sections.forEach((section) => {
-      if (section.heading === "LessonMeta") {
-        html.push(renderMeta(section.lines));
-        return;
-      }
-      if (section.heading === "WarmupScene") {
-        html.push(renderWarmup(section.lines));
-        return;
-      }
-      if (section.heading === "RuleCard") {
-        html.push(renderRule(section.lines));
-        return;
-      }
-      if (section.heading === "TeacherTalk") {
-        html.push(renderTeacherTalk(section.lines));
-        return;
-      }
-      if (section.heading === "PitfallBox") {
-        html.push(renderPitfall(section.lines));
-        return;
-      }
-      if (section.heading === "PracticeA" || section.heading === "PracticeB" || section.heading === "PracticeC") {
-        html.push(renderPracticeSection(section.heading, section.lines));
-        return;
-      }
-      if (section.heading === "FunMission") {
-        html.push(renderFun(section.lines));
-        return;
-      }
-      if (section.heading === "ExitTicket") {
-        html.push(renderExit(section.lines));
-      }
+    sectionOrder.forEach((key) => {
+      if (key === "RuleCard" || key === "TeacherTalk") return;
+      const section = sectionMap[key];
+      if (!section) return;
+      if (key === "LessonMeta") { html.push(renderMeta(section.lines)); return; }
+      if (key === "WarmupScene") { html.push(renderWarmup(section.lines)); return; }
+      if (key === "PitfallBox") { html.push(renderPitfall(section.lines)); return; }
+      if (key === "PracticeA" || key === "PracticeB" || key === "PracticeC") { html.push(renderPracticeSection(section.heading, section.lines)); return; }
+      if (key === "FunMission") { html.push(renderFun(section.lines)); return; }
+      if (key === "ExitTicket") { html.push(renderExit(section.lines)); }
     });
 
     return html.join("");
