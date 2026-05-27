@@ -8,6 +8,8 @@
   }
 
   const STORAGE_PREFIX = "pep_quiz_state_v4_";
+  const PITFALL_STATE_PREFIX = "pep_pitfall_state_v1_";
+  const EXIT_STATE_PREFIX = "pep_exit_state_v1_";
 
   const scenePromptMap = {
     L01: "卡通风语法岛地图，五个区域，明亮小学课堂风",
@@ -126,9 +128,9 @@
       .filter(Boolean);
   }
 
-  function loadQuizState(lessonId) {
+  function loadModuleState(prefix, lessonId) {
     try {
-      const raw = localStorage.getItem(STORAGE_PREFIX + lessonId);
+      const raw = localStorage.getItem(prefix + lessonId);
       if (!raw) {
         return { answers: {}, results: {} };
       }
@@ -142,8 +144,67 @@
     }
   }
 
+  function saveModuleState(prefix, lessonId, data) {
+    localStorage.setItem(prefix + lessonId, JSON.stringify(data));
+  }
+
+  function escapeSvgText(text) {
+    return String(text)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&apos;");
+  }
+
+  function buildWarmupImageSrc(lessonId, sceneText) {
+    const prompt = (sceneText || scenePromptMap[lessonId] || "PEP grammar class").replace(/^图：/, "").trim();
+    const safePrompt = prompt.length > 56 ? `${prompt.slice(0, 56)}...` : prompt;
+    const svg = `
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 420">
+        <defs>
+          <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+            <stop offset="0%" stop-color="#d8ecff"/>
+            <stop offset="100%" stop-color="#f7fff5"/>
+          </linearGradient>
+        </defs>
+        <rect width="960" height="420" fill="url(#bg)"/>
+        <circle cx="120" cy="80" r="64" fill="#86b8ff" opacity="0.38"/>
+        <circle cx="830" cy="72" r="90" fill="#6dd0a0" opacity="0.30"/>
+        <circle cx="860" cy="330" r="110" fill="#ffd37d" opacity="0.26"/>
+        <rect x="76" y="88" rx="24" ry="24" width="808" height="250" fill="#ffffff" fill-opacity="0.82" stroke="#c6dff5" stroke-width="2"/>
+        <text x="120" y="160" font-size="44" font-family="Trebuchet MS, Segoe UI, Microsoft YaHei, sans-serif" fill="#174b74" font-weight="700">${escapeSvgText(lessonId)} 故事开场</text>
+        <text x="120" y="220" font-size="30" font-family="Trebuchet MS, Segoe UI, Microsoft YaHei, sans-serif" fill="#285a80">${escapeSvgText(safePrompt)}</text>
+        <text x="120" y="275" font-size="24" font-family="Trebuchet MS, Segoe UI, Microsoft YaHei, sans-serif" fill="#1c6ca1">观察图片 - 读对话 - 进入规则</text>
+      </svg>
+    `;
+    return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
+  }
+
+  function parsePitfallPairs(lines) {
+    const bullets = parseBullets(lines);
+    const pairs = [];
+    for (let i = 0; i < bullets.length; i += 1) {
+      const wrongMatch = bullets[i].match(/^错[：:]\s*(.+)$/);
+      if (!wrongMatch) {
+        continue;
+      }
+      const wrong = wrongMatch[1].trim();
+      const rightMatch = (bullets[i + 1] || "").match(/^对[：:]\s*(.+)$/);
+      const right = rightMatch ? rightMatch[1].trim() : "";
+      if (wrong && right) {
+        pairs.push({ id: `pit_${pairs.length + 1}`, wrong, right });
+      }
+    }
+    return pairs;
+  }
+
+  function loadQuizState(lessonId) {
+    return loadModuleState(STORAGE_PREFIX, lessonId);
+  }
+
   function saveQuizState(lessonId, data) {
-    localStorage.setItem(STORAGE_PREFIX + lessonId, JSON.stringify(data));
+    saveModuleState(STORAGE_PREFIX, lessonId, data);
   }
 
   function countQuizScore(lessonId) {
@@ -196,13 +257,17 @@
     ].join("");
   }
 
-  function renderWarmup(lines) {
+  function renderWarmup(lessonId, lines) {
     const bullets = parseBullets(lines);
     const ordered = parseOrdered(lines);
     const sceneText = bullets.find((item) => item.startsWith("图：")) || "";
+    const imageSrc = buildWarmupImageSrc(lessonId, sceneText);
     return [
       "<section class='section-card section-warmupscene'>",
       `<h3>${sectionNameMap.WarmupScene}</h3>`,
+      "<div class='warmup-media'>",
+      `<img class='warmup-image' src='${imageSrc}' alt='${escapeAttr(`${lessonId} 故事开场图`)}'>`,
+      "</div>",
       sceneText ? `<p class='scene-desc'>${inlineFormat(sceneText)}</p>` : "",
       "<div class='chat-list'>",
       ordered.map((line) => `<p class='chat-line'>${inlineFormat(line)}</p>`).join(""),
@@ -235,30 +300,40 @@
     ].join("");
   }
 
-  function renderPitfall(lines) {
-    const bullets = parseBullets(lines);
-    const pairs = [];
-    for (let i = 0; i < bullets.length; i += 1) {
-      const text = bullets[i];
-      if (!text.startsWith("错：")) {
-        continue;
-      }
-      const wrong = text.replace(/^错：/, "").trim();
-      const next = bullets[i + 1] || "";
-      const right = next.startsWith("对：") ? next.replace(/^对：/, "").trim() : "";
-      pairs.push({ wrong, right });
-    }
+  function renderPitfall(lessonId, lines) {
+    const pairs = parsePitfallPairs(lines);
+    const pitfallState = loadModuleState(PITFALL_STATE_PREFIX, lessonId);
     return [
       "<section class='section-card section-pitfallbox'>",
       `<h3>${sectionNameMap.PitfallBox}</h3>`,
+      "<div class='pitfall-intro'>",
+      "<p>先看规则，再动手改错：先找主语和动词，再检查时态、人称、词形与标点。</p>",
+      "<p>每题都先读“易错句”，在输入框写出你的订正句，点击“提交批改”即可判断对错。</p>",
+      "</div>",
       "<div class='pit-grid'>",
       pairs
         .map((pair) => {
+          const answer = pitfallState.answers[pair.id] || "";
+          const status = Object.prototype.hasOwnProperty.call(pitfallState.results, pair.id)
+            ? pitfallState.results[pair.id]
+            : null;
+          const feedback = status === true
+            ? "批改结果：正确"
+            : status === false
+              ? "批改结果：错误，请再修改一次"
+              : "批改结果：未批改";
           return [
-            "<div class='pit-item'>",
+            `<article class='pit-item pit-card' data-pit-qid='${pair.id}' data-answer='${escapeAttr(pair.right)}'>`,
             `<p><strong>易错句：</strong>${inlineFormat(pair.wrong)}</p>`,
-            `<p><strong>正确句：</strong>${inlineFormat(pair.right)}</p>`,
-            "</div>"
+            "<p><strong>请你订正：</strong></p>",
+            `<textarea class='quiz-textarea pit-input' data-pit-qid='${pair.id}' placeholder='在这里输入你的订正句'>${escapeHtml(answer)}</textarea>`,
+            "<div class='pit-actions'>",
+            `<button type='button' class='mini-btn pit-submit-btn' data-pit-qid='${pair.id}'>提交批改</button>`,
+            `<button type='button' class='mini-btn light pit-show-btn' data-pit-qid='${pair.id}'>查看订正</button>`,
+            "</div>",
+            `<p class='${feedbackClass(status)}' data-pit-role='feedback'>${feedback}</p>`,
+            "<p class='quiz-answer' data-pit-role='answer'></p>",
+            "</article>"
           ].join("");
         })
         .join(""),
@@ -273,7 +348,7 @@
     return [
       "<section class='section-card section-practice'>",
       `<h3>${title}</h3>`,
-      "<p>提示：这部分是开放练习。自动批改请使用上方“智能批改闯关区”。</p>",
+      "<p>提示：这部分是开放练习。自动批改请使用上方“闯关挑战”。</p>",
       "<ol>",
       list.map((item) => `<li>${inlineFormat(item)}</li>`).join(""),
       "</ol>",
@@ -281,25 +356,72 @@
     ].join("");
   }
 
-  function renderFun(lines) {
+  function renderFun(lessonId, lines) {
     const bullets = parseBullets(lines);
+    const mcqList = (quizBank[lessonId] || []).filter((q) => q.type === "mcq");
     return [
       "<section class='section-card section-funmission'>",
       `<h3>${sectionNameMap.FunMission}</h3>`,
       bullets.map((item) => `<p>${inlineFormat(item)}</p>`).join(""),
+      "<div class='fun-game'>",
+      "<p class='fun-title'>互动小游戏：抽题对战</p>",
+      "<p>点“抽一题”随机生成一道选择题，答完立即批改。</p>",
+      `<button type='button' class='mini-btn' id='fun-draw-btn' ${mcqList.length ? "" : "disabled"}>抽一题</button>`,
+      "<div id='fun-playground' class='fun-playground'></div>",
+      "</div>",
       "</section>"
     ].join("");
   }
 
-  function renderExit(lines) {
-    const list = parseOrdered(lines);
+  function renderExit(lessonId, lines) {
     const badgeLine = parseBullets(lines).find((item) => item.startsWith("自评徽章："));
+    const questions = (quizBank[lessonId] || []).slice(0, 3);
+    const exitState = loadModuleState(EXIT_STATE_PREFIX, lessonId);
     return [
       "<section class='section-card section-exitticket'>",
       `<h3>${sectionNameMap.ExitTicket}</h3>`,
-      "<ol>",
-      list.map((item) => `<li>${inlineFormat(item)}</li>`).join(""),
-      "</ol>",
+      "<p>请完成下面 3 题小测，提交后即可自动批改。</p>",
+      "<div class='exit-list'>",
+      questions.map((question, idx) => {
+        const stateKey = `exit_${question.id}`;
+        const saved = exitState.answers[stateKey];
+        const status = Object.prototype.hasOwnProperty.call(exitState.results, stateKey)
+          ? exitState.results[stateKey]
+          : null;
+        const feedback = status === true
+          ? "批改结果：正确"
+          : status === false
+            ? "批改结果：错误，请再试一次"
+            : "批改结果：未批改";
+        return [
+          `<article class='quiz-card exit-card' data-exit-qid='${question.id}'>`,
+          `<p class='quiz-title'>${idx + 1}. ${inlineFormat(question.prompt)}</p>`,
+          question.type === "mcq"
+            ? [
+              "<div class='quiz-options'>",
+              question.options.map((option, optionIdx) => {
+                const checked = Number(saved) === optionIdx ? "checked" : "";
+                const inputId = `${lessonId}_exit_${question.id}_${optionIdx}`;
+                return [
+                  `<label class='quiz-option' for='${inputId}'>`,
+                  `<input id='${inputId}' type='radio' name='${lessonId}_exit_${question.id}' data-exit-qid='${question.id}' data-exit-qtype='mcq' value='${optionIdx}' ${checked}>`,
+                  `<span>${inlineFormat(option)}</span>`,
+                  "</label>"
+                ].join("");
+              }).join(""),
+              "</div>"
+            ].join("")
+            : question.type === "correct"
+              ? `<textarea class='quiz-textarea' data-exit-qid='${question.id}' data-exit-qtype='text' placeholder='在这里改正句子'>${escapeHtml(saved || "")}</textarea>`
+              : `<input class='quiz-input' type='text' data-exit-qid='${question.id}' data-exit-qtype='text' value='${escapeAttr(saved || "")}' placeholder='在这里输入答案'>`,
+          `<div class='quiz-actions'><button type='button' class='mini-btn exit-submit-btn' data-exit-qid='${question.id}'>提交批改</button><button type='button' class='mini-btn light exit-answer-btn' data-exit-qid='${question.id}'>查看答案</button></div>`,
+          `<p class='${feedbackClass(status)}' data-exit-role='feedback'>${feedback}</p>`,
+          "<p class='quiz-answer' data-exit-role='answer'></p>",
+          "</article>"
+        ].join("");
+      }).join(""),
+      "</div>",
+      questions.length ? "" : "<p>本课暂无可批改小测题。</p>",
       badgeLine ? `<p class='badge-line'>${inlineFormat(badgeLine)}</p>` : "",
       "</section>"
     ].join("");
@@ -364,7 +486,7 @@
     const score = countQuizScore(lessonId);
     return [
       "<section class='section-card section-autoquiz' id='auto-quiz'>",
-      "<h3>智能批改闯关区</h3>",
+      "<h3>闯关挑战</h3>",
       "<p>在输入框里直接作答，点“提交批改”立即判断对错。改错题也可以直接批改。</p>",
       `<div class='quiz-toolbar'><p id='quiz-score' class='quiz-score'>当前得分：${score.correct} / ${score.total}</p><div class='quiz-tools'><button type='button' id='grade-all-btn' class='mini-btn'>一键批改全部</button><button type='button' id='reset-lesson-btn' class='mini-btn light'>重置本课答案</button></div></div>`,
       "<div class='quiz-list'>",
@@ -397,16 +519,17 @@
     sections.forEach((s) => { sectionMap[s.heading] = s; });
 
     const sectionOrder = [
-      "RuleCard", "TeacherTalk", "LessonMeta", "WarmupScene",
+      "WarmupScene", "RuleCard", "TeacherTalk",
       "PitfallBox", "PracticeA", "PracticeB", "PracticeC",
       "FunMission", "ExitTicket"
     ];
 
-    // Keep core teaching explanation at the top before any quiz UI.
-    const headSections = ["RuleCard", "TeacherTalk"];
+    // Put story warmup first, then core teaching explanation.
+    const headSections = ["WarmupScene", "RuleCard", "TeacherTalk"];
     headSections.forEach((key) => {
       const section = sectionMap[key];
       if (!section) return;
+      if (key === "WarmupScene") { html.push(renderWarmup(lesson.id, section.lines)); return; }
       if (key === "RuleCard") { html.push(renderRule(section.lines)); return; }
       if (key === "TeacherTalk") { html.push(renderTeacherTalk(section.lines)); }
     });
@@ -414,15 +537,13 @@
     html.push(renderQuizSection(lesson.id));
 
     sectionOrder.forEach((key) => {
-      if (key === "RuleCard" || key === "TeacherTalk") return;
+      if (key === "WarmupScene" || key === "RuleCard" || key === "TeacherTalk") return;
       const section = sectionMap[key];
       if (!section) return;
-      if (key === "LessonMeta") { html.push(renderMeta(section.lines)); return; }
-      if (key === "WarmupScene") { html.push(renderWarmup(section.lines)); return; }
-      if (key === "PitfallBox") { html.push(renderPitfall(section.lines)); return; }
+      if (key === "PitfallBox") { html.push(renderPitfall(lesson.id, section.lines)); return; }
       if (key === "PracticeA" || key === "PracticeB" || key === "PracticeC") { html.push(renderPracticeSection(section.heading, section.lines)); return; }
-      if (key === "FunMission") { html.push(renderFun(section.lines)); return; }
-      if (key === "ExitTicket") { html.push(renderExit(section.lines)); }
+      if (key === "FunMission") { html.push(renderFun(lesson.id, section.lines)); return; }
+      if (key === "ExitTicket") { html.push(renderExit(lesson.id, section.lines)); }
     });
 
     return html.join("");
@@ -571,6 +692,227 @@
     }
   }
 
+  function bindPitfallEvents(lessonId) {
+    const section = document.querySelector(".section-pitfallbox");
+    if (!section) {
+      return;
+    }
+
+    section.addEventListener("input", (event) => {
+      const target = event.target;
+      if (!(target instanceof HTMLTextAreaElement)) {
+        return;
+      }
+      const qid = target.getAttribute("data-pit-qid");
+      if (!qid) {
+        return;
+      }
+      const pitState = loadModuleState(PITFALL_STATE_PREFIX, lessonId);
+      pitState.answers[qid] = target.value;
+      saveModuleState(PITFALL_STATE_PREFIX, lessonId, pitState);
+    });
+
+    const submitButtons = section.querySelectorAll(".pit-submit-btn");
+    submitButtons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const qid = btn.getAttribute("data-pit-qid");
+        const card = section.querySelector(`.pit-card[data-pit-qid='${qid}']`);
+        if (!qid || !card) {
+          return;
+        }
+        const input = card.querySelector(".pit-input");
+        const feedback = card.querySelector("[data-pit-role='feedback']");
+        if (!(input instanceof HTMLTextAreaElement) || !(feedback instanceof HTMLElement)) {
+          return;
+        }
+        const value = input.value.trim();
+        if (!value) {
+          feedback.className = feedbackClass(null);
+          feedback.textContent = "请先输入你的订正句。";
+          return;
+        }
+        const answer = card.getAttribute("data-answer") || "";
+        const correct = normalizeText(value) === normalizeText(answer);
+        const pitState = loadModuleState(PITFALL_STATE_PREFIX, lessonId);
+        pitState.answers[qid] = input.value;
+        pitState.results[qid] = correct;
+        saveModuleState(PITFALL_STATE_PREFIX, lessonId, pitState);
+        feedback.className = feedbackClass(correct);
+        feedback.textContent = correct ? "批改结果：正确" : "批改结果：错误，请再修改一次";
+      });
+    });
+
+    const showButtons = section.querySelectorAll(".pit-show-btn");
+    showButtons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const qid = btn.getAttribute("data-pit-qid");
+        const card = section.querySelector(`.pit-card[data-pit-qid='${qid}']`);
+        if (!qid || !card) {
+          return;
+        }
+        const answer = card.getAttribute("data-answer") || "";
+        const node = card.querySelector("[data-pit-role='answer']");
+        if (node instanceof HTMLElement) {
+          node.textContent = "参考订正：" + answer;
+        }
+      });
+    });
+  }
+
+  function bindFunEvents(lessonId) {
+    const drawBtn = document.getElementById("fun-draw-btn");
+    const playground = document.getElementById("fun-playground");
+    if (!drawBtn || !playground) {
+      return;
+    }
+    const mcqList = (quizBank[lessonId] || []).filter((q) => q.type === "mcq");
+    if (!mcqList.length) {
+      playground.innerHTML = "<p class='fun-result'>本课暂无可抽取的互动题。</p>";
+      return;
+    }
+
+    function renderMcq(question) {
+      const optionsHtml = question.options
+        .map((option, idx) => {
+          const optId = `${lessonId}_fun_${question.id}_${idx}`;
+          return [
+            `<label class='quiz-option' for='${optId}'>`,
+            `<input id='${optId}' type='radio' name='${lessonId}_fun_choice' value='${idx}'>`,
+            `<span>${inlineFormat(option)}</span>`,
+            "</label>"
+          ].join("");
+        })
+        .join("");
+
+      playground.innerHTML = [
+        `<article class='quiz-card fun-card' data-fun-answer='${question.answer}'>`,
+        `<p class='quiz-title'>随机题：${inlineFormat(question.prompt)}</p>`,
+        "<div class='quiz-options'>",
+        optionsHtml,
+        "</div>",
+        "<div class='quiz-actions'>",
+        "<button type='button' class='mini-btn' id='fun-submit-btn'>提交答案</button>",
+        "<button type='button' class='mini-btn light' id='fun-redraw-btn'>再抽一题</button>",
+        "</div>",
+        "<p class='quiz-feedback' id='fun-feedback'>等待作答...</p>",
+        "</article>"
+      ].join("");
+
+      const submitBtn = document.getElementById("fun-submit-btn");
+      const redrawBtn = document.getElementById("fun-redraw-btn");
+      const feedback = document.getElementById("fun-feedback");
+      submitBtn?.addEventListener("click", () => {
+        const checked = playground.querySelector("input[name='" + lessonId + "_fun_choice']:checked");
+        if (!(feedback instanceof HTMLElement)) {
+          return;
+        }
+        if (!(checked instanceof HTMLInputElement)) {
+          feedback.className = "quiz-feedback";
+          feedback.textContent = "请先选择一个答案。";
+          return;
+        }
+        const correct = Number(checked.value) === Number(question.answer);
+        feedback.className = feedbackClass(correct);
+        feedback.textContent = correct ? "答对了！继续挑战下一题吧。" : "这题答错了，再试一次或重新抽题。";
+      });
+      redrawBtn?.addEventListener("click", drawRandomQuestion);
+    }
+
+    function drawRandomQuestion() {
+      const pick = mcqList[Math.floor(Math.random() * mcqList.length)];
+      renderMcq(pick);
+    }
+
+    drawBtn.addEventListener("click", drawRandomQuestion);
+  }
+
+  function readExitAnswer(lessonId, qid) {
+    const checked = document.querySelector(`input[name='${lessonId}_exit_${qid}']:checked`);
+    if (checked instanceof HTMLInputElement) {
+      return checked.value;
+    }
+    const textNode = document.querySelector(`[data-exit-qid='${qid}'][data-exit-qtype='text']`);
+    return textNode instanceof HTMLInputElement || textNode instanceof HTMLTextAreaElement
+      ? textNode.value
+      : "";
+  }
+
+  function bindExitTicketEvents(lessonId) {
+    const section = document.querySelector(".section-exitticket");
+    if (!section) {
+      return;
+    }
+    const questions = (quizBank[lessonId] || []).slice(0, 3);
+    if (!questions.length) {
+      return;
+    }
+
+    section.addEventListener("input", (event) => {
+      const target = event.target;
+      if (!(target instanceof HTMLElement)) {
+        return;
+      }
+      const qid = target.getAttribute("data-exit-qid");
+      if (!qid) {
+        return;
+      }
+      const key = `exit_${qid}`;
+      const exitState = loadModuleState(EXIT_STATE_PREFIX, lessonId);
+      exitState.answers[key] = readExitAnswer(lessonId, qid);
+      saveModuleState(EXIT_STATE_PREFIX, lessonId, exitState);
+    });
+
+    const submitButtons = section.querySelectorAll(".exit-submit-btn");
+    submitButtons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const qid = btn.getAttribute("data-exit-qid");
+        if (!qid) {
+          return;
+        }
+        const question = questions.find((q) => q.id === qid);
+        const card = section.querySelector(`.exit-card[data-exit-qid='${qid}']`);
+        const feedback = card?.querySelector("[data-exit-role='feedback']");
+        if (!question || !(feedback instanceof HTMLElement)) {
+          return;
+        }
+        const value = readExitAnswer(lessonId, qid);
+        const stateKey = `exit_${qid}`;
+        if (!String(value).trim()) {
+          feedback.className = feedbackClass(null);
+          feedback.textContent = "请先作答再批改。";
+          return;
+        }
+        const correct = evaluateQuestion(question, value);
+        const exitState = loadModuleState(EXIT_STATE_PREFIX, lessonId);
+        exitState.answers[stateKey] = value;
+        exitState.results[stateKey] = correct;
+        saveModuleState(EXIT_STATE_PREFIX, lessonId, exitState);
+        feedback.className = feedbackClass(correct);
+        feedback.textContent = correct ? "批改结果：正确" : "批改结果：错误，请再试一次";
+      });
+    });
+
+    const answerButtons = section.querySelectorAll(".exit-answer-btn");
+    answerButtons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const qid = btn.getAttribute("data-exit-qid");
+        if (!qid) {
+          return;
+        }
+        const question = questions.find((q) => q.id === qid);
+        const card = section.querySelector(`.exit-card[data-exit-qid='${qid}']`);
+        const answerNode = card?.querySelector("[data-exit-role='answer']");
+        if (!question || !(answerNode instanceof HTMLElement)) {
+          return;
+        }
+        const answerText = Array.isArray(question.answers)
+          ? question.answers[0]
+          : question.options[question.answer];
+        answerNode.textContent = "参考答案：" + answerText;
+      });
+    });
+  }
+
   function isLessonDone(lessonId) {
     const questions = quizBank[lessonId] || [];
     if (!questions.length) {
@@ -617,6 +959,9 @@
     }
 
     bindQuizEvents(lesson.id);
+    bindPitfallEvents(lesson.id);
+    bindFunEvents(lesson.id);
+    bindExitTicketEvents(lesson.id);
     refreshScore(lesson.id);
     refreshLessonDoneMarks();
   }
