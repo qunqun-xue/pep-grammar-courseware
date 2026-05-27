@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PEP 语法大冒险 · 小学高年级</title>
+  <title>PEP 英语语法自学冒险</title>
   <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
@@ -12,47 +12,86 @@
     <header class="topbar">
       <div class="brand">
         <p class="brand-kicker">Grammar Adventure</p>
-        <h1>PEP 英语语法自学冒险册</h1>
+        <h1>PEP 英语语法自学冒险</h1>
       </div>
       <div class="topbar-actions">
-        <p id="progress-text" class="progress-text">L01 / L20</p>
-        <button id="copy-link-btn" class="ghost-btn" type="button">复制本课链接</button>
+        <button id="menu-lesson" class="top-menu active" type="button">语法讲解</button>
+        <button id="menu-test" class="top-menu" type="button">语法测试</button>
+        <button id="copy-link-btn" class="ghost-btn" type="button">复制当前链接</button>
       </div>
     </header>
 
-    <div class="content-grid">
-      <aside class="lesson-nav">
-        <p class="nav-title">课程目录</p>
-        <ul id="lesson-list" class="lesson-list"></ul>
-      </aside>
+    <main>
+      <section id="lesson-view" class="view-panel">
+        <div class="content-grid">
+          <aside class="lesson-nav">
+            <p class="nav-title">课程目录</p>
+            <ul id="lesson-list" class="lesson-list"></ul>
+          </aside>
 
-      <main class="lesson-main">
-        <section class="scene-banner">
-          <div class="scene-visual">
-            <div class="blob blob-a"></div>
-            <div class="blob blob-b"></div>
-            <div class="blob blob-c"></div>
-            <p id="scene-id" class="scene-id">L01</p>
-          </div>
-          <div class="scene-meta">
-            <p class="scene-label">情景图提示词</p>
-            <p id="scene-prompt" class="scene-prompt"></p>
-          </div>
-        </section>
+          <div class="lesson-stage">
+            <section class="scene-banner">
+              <div class="scene-visual">
+                <div class="blob blob-a"></div>
+                <div class="blob blob-b"></div>
+                <div class="blob blob-c"></div>
+                <p id="scene-id" class="scene-id">L01</p>
+              </div>
+              <div class="scene-meta">
+                <p class="scene-label">本课场景提示</p>
+                <p id="scene-prompt" class="scene-prompt"></p>
+                <p id="lesson-summary" class="lesson-summary"></p>
+              </div>
+            </section>
 
-        <article class="lesson-paper">
-          <header class="lesson-header">
-            <h2 id="lesson-title"></h2>
+            <article class="lesson-paper">
+              <header class="lesson-header">
+                <div>
+                  <p id="progress-text" class="progress-text">L01 / L20</p>
+                  <h2 id="lesson-title"></h2>
+                </div>
+              </header>
+              <div id="lesson-content" class="lesson-content"></div>
+            </article>
+
+            <nav class="pager">
+              <button id="prev-btn" class="page-btn" type="button">上一课</button>
+              <button id="next-btn" class="page-btn" type="button">下一课</button>
+            </nav>
+          </div>
+        </div>
+      </section>
+
+      <section id="test-view" class="view-panel" hidden>
+        <div class="test-shell">
+          <header class="test-header">
+            <div>
+              <p class="panel-kicker">语法测试</p>
+              <h2>随机 20 题，一次做完，一次批改</h2>
+              <p class="panel-desc">每次点击“生成 20 题”都会自动抽取新题。全部做完后点提交，系统会自动批改，并把错题加入错题集。</p>
+            </div>
+            <div class="test-toolbar">
+              <button id="generate-test-btn" class="mini-btn" type="button">生成 20 题</button>
+              <button id="submit-test-btn" class="mini-btn light" type="button">一键提交并批改</button>
+              <button id="clear-wrong-btn" class="mini-btn light" type="button">清空错题集</button>
+            </div>
           </header>
-          <div id="lesson-content" class="lesson-content"></div>
-        </article>
 
-        <nav class="pager">
-          <button id="prev-btn" class="page-btn" type="button">上一课</button>
-          <button id="next-btn" class="page-btn" type="button">下一课</button>
-        </nav>
-      </main>
-    </div>
+          <div class="test-switch">
+            <button class="test-tab active" data-test-tab="quiz" type="button">测试</button>
+            <button class="test-tab" data-test-tab="wrong" type="button">错题集 <span id="wrong-count" class="badge-count">0</span></button>
+          </div>
+
+          <article class="lesson-paper">
+            <div class="quiz-toolbar">
+              <p id="test-score" class="quiz-score">当前得分：0 / 20</p>
+              <p class="quiz-hint">先作答，再统一提交。错题会自动记录。</p>
+            </div>
+            <div id="test-question-list" class="lesson-content"></div>
+          </article>
+        </div>
+      </section>
+    </main>
   </div>
 
   <script src="./lessons-data.js"></script>
@@ -60,3 +99,5 @@
   <script src="./app.js"></script>
 </body>
 </html>
+
+
