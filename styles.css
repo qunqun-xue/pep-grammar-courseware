@@ -784,12 +784,14 @@ body {
 
 .test-summary {
   margin: 0 0 12px;
-  padding: 10px 12px;
-  border-radius: 10px;
-  background: #f3f9ff;
-  border: 1px solid #d7e8f7;
+  padding: 14px 18px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #e8f4fd 0%, #f0f9ff 100%);
+  border: 1px solid #b8d9f0;
   color: #134066;
   font-weight: 700;
+  font-size: 15px;
+  line-height: 1.5;
 }
 
 .test-paper,
@@ -843,7 +845,179 @@ body {
   .sub-tab,
   .mini-btn,
   .ghost-btn,
-  .page-btn {
+  .page-btn,
+  .submit-btn {
     width: 100%;
   }
+}
+
+/* 测试页面提交区域 */
+.test-submit-area {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 2px dashed #d7e8f7;
+  display: flex;
+  justify-content: center;
+}
+
+.submit-btn {
+  border: none;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #1f6feb 0%, #25a66a 100%);
+  color: #fff;
+  font-size: 18px;
+  font-weight: 800;
+  padding: 16px 48px;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(31, 111, 235, 0.3);
+  transition: all 0.3s ease;
+}
+
+.submit-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(31, 111, 235, 0.4);
+}
+
+.submit-btn:active {
+  transform: translateY(0);
+}
+
+/* 错题详情样式 */
+.error-detail {
+  margin-top: 12px;
+  padding: 14px 16px;
+  border-radius: 10px;
+  background: #fff8f7;
+  border: 1px solid #f5c6c2;
+}
+
+.error-label {
+  margin: 0 0 6px;
+  font-weight: 700;
+  color: #b94d44;
+  font-size: 13px;
+}
+
+.user-answer {
+  margin: 0 0 10px;
+  padding: 8px 12px;
+  background: #fff;
+  border-radius: 8px;
+  border: 1px solid #f5c6c2;
+  color: #8b3a32;
+  font-weight: 600;
+}
+
+.correct-label {
+  margin: 0 0 6px;
+  font-weight: 700;
+  color: #1c7e49;
+  font-size: 13px;
+}
+
+.correct-answer {
+  margin: 0;
+  padding: 8px 12px;
+  background: #e8fbef;
+  border-radius: 8px;
+  border: 1px solid #a3e4bf;
+  color: #1c7e49;
+  font-weight: 600;
+}
+
+/* 测试卡片美化 */
+.test-card {
+  border: 1px solid #d7e8f7;
+  border-radius: 14px;
+  background: #fff;
+  padding: 16px;
+  transition: box-shadow 0.2s ease;
+}
+
+.test-card:hover {
+  box-shadow: 0 4px 12px rgba(30, 84, 122, 0.08);
+}
+
+/* 测试来源标签美化 */
+.test-source {
+  margin: 0 0 8px;
+  font-size: 12px;
+  color: #4d6780;
+  font-weight: 700;
+  display: inline-block;
+  padding: 4px 10px;
+  background: #f3f9ff;
+  border-radius: 6px;
+  border: 1px solid #d7e8f7;
+}
+
+/* 测试题目标题美化 */
+.test-card .quiz-title {
+  margin: 0 0 12px;
+  color: #133d62;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+/* 测试选项美化 */
+.test-card .quiz-options {
+  display: grid;
+  gap: 8px;
+}
+
+.test-card .quiz-option {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  border: 1px solid #e4edf8;
+  border-radius: 10px;
+  padding: 10px 12px;
+  background: #fafcff;
+  transition: all 0.2s ease;
+}
+
+.test-card .quiz-option:hover {
+  border-color: #1f6feb;
+  background: #f0f7ff;
+}
+
+/* 测试输入框美化 */
+.test-card .quiz-input,
+.test-card .quiz-textarea {
+  border: 1px solid #bfd6ec;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 15px;
+  color: #1d4568;
+  background: #fdfefe;
+  transition: border-color 0.2s ease;
+}
+
+.test-card .quiz-input:focus,
+.test-card .quiz-textarea:focus {
+  border-color: #1f6feb;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(31, 111, 235, 0.1);
+}
+
+/* 测试反馈美化 */
+.test-card .quiz-feedback {
+  margin: 10px 0 0;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.test-card .quiz-feedback.correct {
+  background: linear-gradient(135deg, #e8fbef 0%, #d4f5e0 100%);
+  color: #1c7e49;
+  border: 1px solid #a3e4bf;
+}
+
+.test-card .quiz-feedback.wrong {
+  background: linear-gradient(135deg, #fff0ef 0%, #ffe8e6 100%);
+  color: #b94d44;
+  border: 1px solid #f5c6c2;
 }
