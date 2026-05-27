@@ -1,10 +1,10 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PEP 英语语法自学冒险</title>
-  <link rel="stylesheet" href="./styles.css">
+  <title>PEP 鑻辫璇硶鑷鍐掗櫓</title>
+  <link rel="stylesheet" href="./styles.css?v=20260527i">
 </head>
 <body>
   <div class="bg-layer" aria-hidden="true"></div>
@@ -12,12 +12,12 @@
     <header class="topbar">
       <div class="brand">
         <p class="brand-kicker">Grammar Adventure</p>
-        <h1>PEP 英语语法自学冒险</h1>
+        <h1>PEP 鑻辫璇硶鑷鍐掗櫓</h1>
       </div>
       <div class="topbar-actions">
-        <button id="menu-lesson" class="top-menu active" type="button">语法讲解</button>
-        <button id="menu-test" class="top-menu" type="button">语法测试</button>
-        <button id="copy-link-btn" class="ghost-btn" type="button">复制当前链接</button>
+        <button id="menu-lesson" class="top-menu active" type="button">璇硶璁茶В</button>
+        <button id="menu-test" class="top-menu" type="button">璇硶娴嬭瘯</button>
+        <button id="copy-link-btn" class="ghost-btn" type="button">澶嶅埗褰撳墠閾炬帴</button>
       </div>
     </header>
 
@@ -25,7 +25,7 @@
       <section id="lesson-view" class="view-panel">
         <div class="content-grid">
           <aside class="lesson-nav">
-            <p class="nav-title">课程目录</p>
+            <p class="nav-title">璇剧▼鐩綍</p>
             <ul id="lesson-list" class="lesson-list"></ul>
           </aside>
 
@@ -38,7 +38,7 @@
                 <p id="scene-id" class="scene-id">L01</p>
               </div>
               <div class="scene-meta">
-                <p class="scene-label">本课场景提示</p>
+                <p class="scene-label">鏈鍦烘櫙鎻愮ず</p>
                 <p id="scene-prompt" class="scene-prompt"></p>
                 <p id="lesson-summary" class="lesson-summary"></p>
               </div>
@@ -55,8 +55,8 @@
             </article>
 
             <nav class="pager">
-              <button id="prev-btn" class="page-btn" type="button">上一课</button>
-              <button id="next-btn" class="page-btn" type="button">下一课</button>
+              <button id="prev-btn" class="page-btn" type="button">涓婁竴璇?/button>
+              <button id="next-btn" class="page-btn" type="button">涓嬩竴璇?/button>
             </nav>
           </div>
         </div>
@@ -66,26 +66,26 @@
         <div class="test-shell">
           <header class="test-header">
             <div>
-              <p class="panel-kicker">语法测试</p>
-              <h2>随机 20 题，一次做完，一次批改</h2>
-              <p class="panel-desc">每次点击“生成 20 题”都会自动抽取新题。全部做完后点提交，系统会自动批改，并把错题加入错题集。</p>
+              <p class="panel-kicker">璇硶娴嬭瘯</p>
+              <h2>闅忔満 20 棰橈紝涓€娆″仛瀹岋紝涓€娆℃壒鏀?/h2>
+              <p class="panel-desc">姣忔鐐瑰嚮鈥滅敓鎴?20 棰樷€濋兘浼氳嚜鍔ㄦ娊鍙栨柊棰樸€傚叏閮ㄥ仛瀹屽悗鐐规彁浜わ紝绯荤粺浼氳嚜鍔ㄦ壒鏀癸紝骞舵妸閿欓鍔犲叆閿欓闆嗐€?/p>
             </div>
             <div class="test-toolbar">
-              <button id="generate-test-btn" class="mini-btn" type="button">生成 20 题</button>
-              <button id="submit-test-btn" class="mini-btn light" type="button">一键提交并批改</button>
-              <button id="clear-wrong-btn" class="mini-btn light" type="button">清空错题集</button>
+              <button id="generate-test-btn" class="mini-btn" type="button">鐢熸垚 20 棰?/button>
+              <button id="submit-test-btn" class="mini-btn light" type="button">涓€閿彁浜ゅ苟鎵规敼</button>
+              <button id="clear-wrong-btn" class="mini-btn light" type="button">娓呯┖閿欓闆?/button>
             </div>
           </header>
 
           <div class="test-switch">
-            <button class="test-tab active" data-test-tab="quiz" type="button">测试</button>
-            <button class="test-tab" data-test-tab="wrong" type="button">错题集 <span id="wrong-count" class="badge-count">0</span></button>
+            <button class="test-tab active" data-test-tab="quiz" type="button">娴嬭瘯</button>
+            <button class="test-tab" data-test-tab="wrong" type="button">閿欓闆?<span id="wrong-count" class="badge-count">0</span></button>
           </div>
 
           <article class="lesson-paper">
             <div class="quiz-toolbar">
-              <p id="test-score" class="quiz-score">当前得分：0 / 20</p>
-              <p class="quiz-hint">先作答，再统一提交。错题会自动记录。</p>
+              <p id="test-score" class="quiz-score">褰撳墠寰楀垎锛? / 20</p>
+              <p class="quiz-hint">鍏堜綔绛旓紝鍐嶇粺涓€鎻愪氦銆傞敊棰樹細鑷姩璁板綍銆?/p>
             </div>
             <div id="test-question-list" class="lesson-content"></div>
           </article>
@@ -94,10 +94,17 @@
     </main>
   </div>
 
-  <script src="./lessons-data.js"></script>
-  <script src="./quiz-bank.js"></script>
-  <script src="./app.js"></script>
+  <script src="./lessons-data.js?v=20260527i"></script>
+  <script src="./quiz-bank.js?v=20260527i"></script>
+  <script src="./app.js?v=20260527i"></script>
 </body>
+<<<<<<< HEAD
 </html>
 
+
+=======
+</html>
+
+
+>>>>>>> 8141fd1 (Bump cache-bust version for Pages entry)
 
