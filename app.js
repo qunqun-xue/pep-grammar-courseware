@@ -1,9 +1,9 @@
-(function () {
+﻿(function () {
   const lessons = Array.isArray(window.LESSONS) ? window.LESSONS : [];
   const quizBank = window.QUIZ_BANK || {};
 
   if (!lessons.length) {
-    document.body.innerHTML = "<p style='padding:20px;'>未检测到课程数据，请检查 lessons-data.js。</p>";
+    document.body.innerHTML = "<p style='padding:20px;'>鏈娴嬪埌璇剧▼鏁版嵁锛岃妫€鏌?lessons-data.js銆?/p>";
     return;
   }
 
@@ -18,11 +18,11 @@
 
   const sectionNameMap = {
     RuleCard: '语法魔法卡',
-    TeacherTalk: '老师讲透',
-    PitfallBox: '避坑雷达',
-    PracticeA: 'A关 练习',
-    PracticeB: 'B关 练习',
-    PracticeC: 'C关 练习',
+    TeacherTalk: '老师讲透', 
+    PitfallBox: '閬垮潙闆疯揪',
+    PracticeA: 'A鍏?缁冧範',
+    PracticeB: 'B鍏?缁冧範',
+    PracticeC: 'C鍏?缁冧範',
     ExitTicket: '通关小测'
   };
 
@@ -42,8 +42,8 @@
     subtabWrong: document.getElementById('subtab-wrong'),
     examPanel: document.getElementById('exam-panel'),
     wrongbookPanel: document.getElementById('wrongbook-panel'),
-    generateTestBtn: document.getElementById('generate-test-btn'),
     submitTestBtn: document.getElementById('submit-test-btn'),
+    testSubmitArea: document.getElementById('test-submit-area'),
     testSummary: document.getElementById('test-summary'),
     testPaper: document.getElementById('test-paper'),
     wrongbookList: document.getElementById('wrongbook-list'),
@@ -90,7 +90,7 @@
     return String(text || '')
       .normalize('NFKC')
       .toLowerCase()
-      .replace(/[’']/g, '')
+      .replace(/[鈥?]/g, '')
       .replace(/[^a-z0-9?\s]/g, ' ')
       .replace(/\s+/g, ' ')
       .trim();
@@ -155,8 +155,8 @@
     const bullets = parseBullets(lines);
     const pairs = [];
     for (let i = 0; i < bullets.length; i += 1) {
-      const wrong = bullets[i].match(/^错[：:]\s*(.+)$/);
-      const right = (bullets[i + 1] || '').match(/^对[：:]\s*(.+)$/);
+      const wrong = bullets[i].match(/^閿橻锛?]\s*(.+)$/);
+      const right = (bullets[i + 1] || '').match(/^瀵筟锛?]\s*(.+)$/);
       if (wrong && right) {
         pairs.push({ id: `pit_${pairs.length + 1}`, wrong: wrong[1].trim(), right: right[1].trim() });
       }
@@ -191,9 +191,9 @@
       }).join(''), '</div>'].join('');
     }
     if (question.type === 'correct') {
-      return `<textarea class='quiz-textarea' data-qid='${question.id}' data-qtype='text' placeholder='在这里改正句子'>${escapeHtml(savedValue || '')}</textarea>`;
+      return `<textarea class='quiz-textarea' data-qid='${question.id}' data-qtype='text' placeholder='鍦ㄨ繖閲屾敼姝ｅ彞瀛?>${escapeHtml(savedValue || '')}</textarea>`;
     }
-    return `<input class='quiz-input' type='text' data-qid='${question.id}' data-qtype='text' value='${escapeAttr(savedValue || '')}' placeholder='在这里输入答案'>`;
+    return `<input class='quiz-input' type='text' data-qid='${question.id}' data-qtype='text' value='${escapeAttr(savedValue || '')}' placeholder='鍦ㄨ繖閲岃緭鍏ョ瓟妗?>`;
   }
 
   function renderRule(lines) {
@@ -209,17 +209,17 @@
   function renderPitfall(lessonId, lines) {
     const pairs = parsePitfallPairs(lines);
     const pitState = loadModuleState(KEYS.pitfall, lessonId);
-    return [`<section class='section-card section-pitfallbox'><h3>${sectionNameMap.PitfallBox}</h3><div class='pitfall-intro'><p>先读说明，再看易错句：先找主语、动词和时态，再检查人称、词形和标点。</p><p>在输入框里写出你的订正句，点击提交后系统会自动批改，并保留你的答案。</p></div><div class='pit-grid'>`, pairs.map((pair) => {
+    return [`<section class='section-card section-pitfallbox'><h3>${sectionNameMap.PitfallBox}</h3><div class='pitfall-intro'><p>鍏堣璇存槑锛屽啀鐪嬫槗閿欏彞锛氬厛鎵句富璇€佸姩璇嶅拰鏃舵€侊紝鍐嶆鏌ヤ汉绉般€佽瘝褰㈠拰鏍囩偣銆?/p><p>鍦ㄨ緭鍏ユ閲屽啓鍑轰綘鐨勮姝ｅ彞锛岀偣鍑绘彁浜ゅ悗绯荤粺浼氳嚜鍔ㄦ壒鏀癸紝骞朵繚鐣欎綘鐨勭瓟妗堛€?/p></div><div class='pit-grid'>`, pairs.map((pair) => {
       const answer = pitState.answers[pair.id] || '';
       const status = Object.prototype.hasOwnProperty.call(pitState.results, pair.id) ? pitState.results[pair.id] : null;
-      return [`<article class='pit-card' data-pit-qid='${pair.id}' data-answer='${escapeAttr(pair.right)}'>`, `<p class='pit-wrong'><strong>易错句：</strong>${inlineFormat(pair.wrong)}</p>`, '<p><strong>请你订正：</strong></p>', `<textarea class='quiz-textarea pit-input' data-pit-qid='${pair.id}' placeholder='在这里输入你的订正句'>${escapeHtml(answer)}</textarea>`, '<div class="pit-actions">', `<button type='button' class='mini-btn pit-submit-btn' data-pit-qid='${pair.id}'>提交批改</button>`, `<button type='button' class='mini-btn light pit-show-btn' data-pit-qid='${pair.id}'>查看订正</button>`, '</div>', `<p class='${feedbackClass(status)}' data-pit-role='feedback'>${feedbackText(status)}</p>`, "<p class='quiz-answer' data-pit-role='answer'></p>", '</article>'].join('');
+      return [`<article class='pit-card' data-pit-qid='${pair.id}' data-answer='${escapeAttr(pair.right)}'>`, `<p class='pit-wrong'><strong>鏄撻敊鍙ワ細</strong>${inlineFormat(pair.wrong)}</p>`, '<p><strong>璇蜂綘璁㈡锛?/strong></p>', `<textarea class='quiz-textarea pit-input' data-pit-qid='${pair.id}' placeholder='鍦ㄨ繖閲岃緭鍏ヤ綘鐨勮姝ｅ彞'>${escapeHtml(answer)}</textarea>`, '<div class="pit-actions">', `<button type='button' class='mini-btn pit-submit-btn' data-pit-qid='${pair.id}'>鎻愪氦鎵规敼</button>`, `<button type='button' class='mini-btn light pit-show-btn' data-pit-qid='${pair.id}'>鏌ョ湅璁㈡</button>`, '</div>', `<p class='${feedbackClass(status)}' data-pit-role='feedback'>${feedbackText(status)}</p>`, "<p class='quiz-answer' data-pit-role='answer'></p>", '</article>'].join('');
     }).join(''), '</div></section>'].join('');
   }
 
   function renderPracticeSection(heading, lines) {
     const list = parseOrdered(lines);
     const title = sectionNameMap[heading] || heading;
-    return [`<section class='section-card section-practice'><h3>${title}</h3><p>提示：这部分是开放练习，适合先自己想一想，再对照小测巩固。</p><ol>`, list.map((item) => `<li>${inlineFormat(item)}</li>`).join(''), '</ol></section>'].join('');
+    return [`<section class='section-card section-practice'><h3>${title}</h3><p>鎻愮ず锛氳繖閮ㄥ垎鏄紑鏀剧粌涔狅紝閫傚悎鍏堣嚜宸辨兂涓€鎯筹紝鍐嶅鐓у皬娴嬪珐鍥恒€?/p><ol>`, list.map((item) => `<li>${inlineFormat(item)}</li>`).join(''), '</ol></section>'].join('');
   }
 
   function countLessonScore(lessonId) {
@@ -245,7 +245,7 @@
     if (!question || !card) return;
     const node = card.querySelector('[data-role="answer"]');
     if (node instanceof HTMLElement) {
-      node.textContent = '参考答案：' + getAnswerText(question);
+      node.textContent = '鍙傝€冪瓟妗堬細' + getAnswerText(question);
     }
   }
 
@@ -266,7 +266,7 @@
     const scoreNode = document.getElementById('quiz-score');
     if (!scoreNode) return;
     const score = countLessonScore(lessonId);
-    scoreNode.textContent = `当前得分：${score.correct} / ${score.total}`;
+    scoreNode.textContent = '当前得分：' + score.correct + ' / ' + score.total;
   }
 
   function isLessonDone(lessonId) {
@@ -281,18 +281,18 @@
       const lessonId = btn.getAttribute('data-lesson-id');
       const mark = btn.querySelector('.done-mark');
       if (!lessonId || !(mark instanceof HTMLElement)) return;
-      mark.textContent = isLessonDone(lessonId) ? '全对' : '';
+      mark.textContent = isLessonDone(lessonId) ? '鍏ㄥ' : '';
     });
   }
 
   function renderExitTicket(lessonId, lines) {
     const questions = (quizBank[lessonId] || []).slice(0, 3);
     const exitState = loadModuleState(KEYS.exit, lessonId);
-    const badgeLine = parseBullets(lines).find((item) => item.startsWith('自评徽章：'));
+    const badgeLine = parseBullets(lines).find((item) => item.includes('自评徽章'));
     return [
       "<section class='section-card section-exitticket'>",
       `<h3>${sectionNameMap.ExitTicket}</h3>`,
-      '<p>请完成下面 3 题小测，提交后即可自动批改。</p>',
+      '<p>璇峰畬鎴愪笅闈?3 棰樺皬娴嬶紝鎻愪氦鍚庡嵆鍙嚜鍔ㄦ壒鏀广€?/p>',
       "<div class='exit-list'>",
       questions.map((question, idx) => {
         const stateKey = `exit_${question.id}`;
@@ -302,7 +302,7 @@
           `<article class='quiz-card exit-card' data-exit-qid='${question.id}'>`,
           `<p class='quiz-title'>${idx + 1}. ${inlineFormat(question.prompt)}</p>`,
           questionInputHtml('exit', lessonId, question, saved),
-          `<div class='quiz-actions'><button type='button' class='mini-btn exit-submit-btn' data-exit-qid='${question.id}'>提交批改</button><button type='button' class='mini-btn light exit-answer-btn' data-exit-qid='${question.id}'>查看答案</button></div>`,
+          `<div class='quiz-actions'><button type='button' class='mini-btn exit-submit-btn' data-exit-qid='${question.id}'>鎻愪氦鎵规敼</button><button type='button' class='mini-btn light exit-answer-btn' data-exit-qid='${question.id}'>鏌ョ湅绛旀</button></div>`,
           `<p class='${feedbackClass(status)}' data-exit-role='feedback'>${feedbackText(status)}</p>`,
           "<p class='quiz-answer' data-exit-role='answer'></p>",
           '</article>'
@@ -427,7 +427,7 @@
         if (!card) return;
         const answerNode = card.querySelector('[data-pit-role="answer"]');
         if (answerNode instanceof HTMLElement) {
-          answerNode.textContent = '参考订正：' + (card.getAttribute('data-answer') || '');
+          answerNode.textContent = '鍙傝€冭姝ｏ細' + (card.getAttribute('data-answer') || '');
         }
       });
     });
@@ -474,7 +474,7 @@
         exitState.results[`exit_${qid}`] = correct;
         saveModuleState(KEYS.exit, lessonId, exitState);
         feedback.className = feedbackClass(correct);
-        feedback.textContent = correct ? '批改结果：正确' : '批改结果：错误，请再试一次';
+        feedback.textContent = correct ? '批改结果：正确' : '批改结果：错误，请再修改一次';
       });
     });
 
@@ -486,7 +486,7 @@
         const card = section.querySelector(`.exit-card[data-exit-qid='${qid}']`);
         const node = card?.querySelector('[data-exit-role="answer"]');
         if (question && node instanceof HTMLElement) {
-          node.textContent = '参考答案：' + getAnswerText(question);
+          node.textContent = '鍙傝€冪瓟妗堬細' + getAnswerText(question);
         }
       });
     });
@@ -604,7 +604,7 @@
         if (!card) return;
         const answerNode = card.querySelector('[data-pit-role="answer"]');
         if (answerNode instanceof HTMLElement) {
-          answerNode.textContent = '参考订正：' + (card.getAttribute('data-answer') || '');
+          answerNode.textContent = '鍙傝€冭姝ｏ細' + (card.getAttribute('data-answer') || '');
         }
       });
     });
@@ -651,7 +651,7 @@
         exitState.results[`exit_${qid}`] = correct;
         saveModuleState(KEYS.exit, lessonId, exitState);
         feedback.className = feedbackClass(correct);
-        feedback.textContent = correct ? '批改结果：正确' : '批改结果：错误，请再试一次';
+        feedback.textContent = correct ? '批改结果：正确' : '批改结果：错误，请再修改一次';
       });
     });
 
@@ -663,7 +663,7 @@
         const card = section.querySelector(`.exit-card[data-exit-qid='${qid}']`);
         const node = card?.querySelector('[data-exit-role="answer"]');
         if (question && node instanceof HTMLElement) {
-          node.textContent = '参考答案：' + getAnswerText(question);
+          node.textContent = '鍙傝€冪瓟妗堬細' + getAnswerText(question);
         }
       });
     });
@@ -765,13 +765,21 @@
   }
 
   function renderTestQuestion(item, index, savedAnswer, savedResult) {
+    const isWrong = savedResult === false;
+    const correctAnswer = getAnswerText(item);
+    let errorDetail = '';
+    if (isWrong && savedAnswer) {
+      errorDetail = `<div class='error-detail'><p class='error-label'>浣犵殑绛旀锛?/p><p class='user-answer'>${inlineFormat(savedAnswer)}</p><p class='correct-label'>姝ｇ‘绛旀锛?/p><p class='correct-answer'>${inlineFormat(correctAnswer)}</p></div>`;
+    } else if (isWrong && !savedAnswer) {
+      errorDetail = `<div class='error-detail'><p class='error-label'>鏈綔绛?/p><p class='correct-label'>姝ｇ‘绛旀锛?/p><p class='correct-answer'>${inlineFormat(correctAnswer)}</p></div>`;
+    }
     return [
       `<article class='test-card' data-test-uid='${item.uid}' data-lesson-id='${item.lessonId}' data-question-id='${item.id}'>`,
       `<p class='test-source'>${item.lessonId} ${item.lessonTitle}</p>`,
       `<p class='quiz-title'>${index + 1}. ${inlineFormat(item.prompt)}</p>`,
       questionInputHtml('test', item.uid, item, savedAnswer),
       `<p class='${feedbackClass(savedResult)}' data-test-role='feedback'>${savedResult === undefined ? '批改结果：未批改' : savedResult ? '批改结果：正确' : '批改结果：错误'}</p>`,
-      "<p class='quiz-answer' data-test-role='answer'></p>",
+      errorDetail,
       '</article>'
     ].join('');
   }
@@ -779,20 +787,24 @@
   function renderTestPaper() {
     const testState = state.test && Array.isArray(state.test.items) ? state.test : { items: [], answers: {}, results: {}, submitted: false };
     if (!testState.items.length) {
-      el.testPaper.innerHTML = "<p class='empty-state'>点击“随机生成20题”开始测试。</p>";
-      el.submitTestBtn.disabled = true;
-      el.testSummary.textContent = '点击“随机生成20题”开始测试。';
+      el.testPaper.innerHTML = "<p class='empty-state'>正在生成测试题...</p>";
+      el.testSummary.textContent = '正在加载测试...';
+      if (el.testSubmitArea) el.testSubmitArea.classList.add('hidden');
       return;
     }
-    el.submitTestBtn.disabled = false;
     const scored = Object.values(testState.results || {}).filter(Boolean).length;
     const answered = Object.keys(testState.answers || {}).length;
-    el.testSummary.textContent = testState.submitted ? `已提交：${scored} 题正确，错题 ${testState.items.length - scored} 题。` : `当前已作答 ${answered} / ${testState.items.length} 题。完成后点击“提交整卷批改”。`;
+    el.testSummary.textContent = testState.submitted
+      ? `已提交：${scored} 题正确，错题 ${testState.items.length - scored} 题。`
+      : `当前已作答 ${answered} / ${testState.items.length} 题。完成后点击“提交整卷批改”。`;
     el.testPaper.innerHTML = testState.items.map((item, idx) => {
       const savedAnswer = testState.answers[item.uid] || '';
       const savedResult = Object.prototype.hasOwnProperty.call(testState.results || {}, item.uid) ? testState.results[item.uid] : undefined;
       return renderTestQuestion(item, idx, savedAnswer, savedResult);
     }).join('');
+    if (el.testSubmitArea) {
+      el.testSubmitArea.classList.toggle('hidden', testState.submitted);
+    }
   }
 
   function bindTestPaperEvents() {
@@ -842,16 +854,16 @@
   function renderWrongbook() {
     const list = state.wrongbook || [];
     if (!list.length) {
-      el.wrongbookList.innerHTML = "<p class='empty-state'>还没有错题。完成一次测试后，错题会自动出现在这里。</p>";
+      el.wrongbookList.innerHTML = "<p class='empty-state'>杩樻病鏈夐敊棰樸€傚畬鎴愪竴娆℃祴璇曞悗锛岄敊棰樹細鑷姩鍑虹幇鍦ㄨ繖閲屻€?/p>";
       return;
     }
     el.wrongbookList.innerHTML = list.map((entry, idx) => [
       `<article class='wrongbook-card' data-wrong-uid='${entry.uid}'>`,
       `<p class='wrongbook-source'>${idx + 1}. ${escapeHtml(entry.lessonId)} ${escapeHtml(entry.lessonTitle)}</p>`,
       `<p class='quiz-title'>${inlineFormat(entry.prompt)}</p>`,
-      `<p><strong>你的答案：</strong>${entry.userAnswer ? inlineFormat(entry.userAnswer) : "<span class='muted'>未作答</span>"}</p>`,
-      `<p><strong>正确答案：</strong>${inlineFormat(entry.correctAnswer)}</p>`,
-      `<div class='wrongbook-actions'><button type='button' class='mini-btn light wrong-remove-btn' data-wrong-uid='${entry.uid}'>移出错题集</button></div>`,
+      `<p><strong>浣犵殑绛旀锛?/strong>${entry.userAnswer ? inlineFormat(entry.userAnswer) : "<span class='muted'>鏈綔绛?/span>"}</p>`,
+      `<p><strong>姝ｇ‘绛旀锛?/strong>${inlineFormat(entry.correctAnswer)}</p>`,
+      `<div class='wrongbook-actions'><button type='button' class='mini-btn light wrong-remove-btn' data-wrong-uid='${entry.uid}'>绉诲嚭閿欓闆?/button></div>`,
       '</article>'
     ].join('')).join('');
     el.wrongbookList.querySelectorAll('.wrong-remove-btn').forEach((btn) => {
@@ -881,13 +893,12 @@
       state.test.answers[item.uid] = userAnswer;
       const card = paper.querySelector(`.test-card[data-test-uid='${item.uid}']`);
       const feedback = card?.querySelector('[data-test-role="feedback"]');
-      const answerNode = card?.querySelector('[data-test-role="answer"]');
       if (!String(userAnswer).trim()) {
         nextResults[item.uid] = false;
         blankCount += 1;
         if (feedback instanceof HTMLElement) {
           feedback.className = feedbackClass(null);
-          feedback.textContent = '批改结果：未作答';
+          feedback.textContent = '鎵规敼缁撴灉锛氭湭浣滅瓟';
         }
         return;
       }
@@ -896,10 +907,7 @@
       if (correct) correctCount += 1;
       if (feedback instanceof HTMLElement) {
         feedback.className = feedbackClass(correct);
-        feedback.textContent = correct ? '批改结果：正确' : '批改结果：错误';
-      }
-      if (!correct && answerNode instanceof HTMLElement) {
-        answerNode.textContent = '参考答案：' + getAnswerText(item);
+        feedback.textContent = correct ? '批改结果：正确' : '批改结果：错误，请再修改一次';
       }
       if (correct) {
         state.wrongbook = (state.wrongbook || []).filter((entry) => entry.uid !== item.uid);
@@ -911,20 +919,26 @@
     state.test.results = nextResults;
     state.test.submitted = true;
     saveTestState(state.test);
-    el.testSummary.textContent = `本次得分：${correctCount} / ${state.test.items.length}，未作答 ${blankCount} 题，错题 ${state.test.items.length - correctCount} 题。错题已加入错题集。`;
+    el.testSummary.textContent = '本次得分：' + correctCount + ' / ' + state.test.items.length + '，未作答 ' + blankCount + ' 题，错题 ' + (state.test.items.length - correctCount) + ' 题。错题已加入错题集。';
     renderWrongbook();
     renderTestPaper();
     bindTestPaperEvents();
+    if (el.testSubmitArea) {
+      el.testSubmitArea.classList.add('hidden');
+    }
   }
 
   function renderTestView() {
-    if (!state.test) {
-      state.test = { items: [], answers: {}, results: {}, submitted: false, generatedAt: Date.now() };
-      saveTestState(state.test);
+    if (!state.test || !state.test.items || !state.test.items.length) {
+      generateTestSheet();
+      return;
     }
     renderTestPaper();
     renderWrongbook();
     bindTestPaperEvents();
+    if (el.testSubmitArea) {
+      el.testSubmitArea.classList.toggle('hidden', state.test.submitted);
+    }
   }
 
   function setTestSubMode(submode) {
@@ -953,7 +967,6 @@
     el.tabTest.addEventListener('click', () => switchMode('test'));
     el.subtabExam.addEventListener('click', () => setTestSubMode('exam'));
     el.subtabWrong.addEventListener('click', () => setTestSubMode('wrong'));
-    el.generateTestBtn.addEventListener('click', generateTestSheet);
     el.submitTestBtn.addEventListener('click', gradeCurrentTest);
     el.clearWrongbookBtn.addEventListener('click', () => {
       state.wrongbook = [];
@@ -974,9 +987,9 @@
         await navigator.clipboard.writeText(window.location.href);
         el.copyLinkBtn.textContent = '已复制';
       } catch (_err) {
-        el.copyLinkBtn.textContent = '复制失败';
+        el.copyLinkBtn.textContent = '澶嶅埗澶辫触';
       }
-      setTimeout(() => { el.copyLinkBtn.textContent = '复制当前链接'; }, 1200);
+      setTimeout(() => { el.copyLinkBtn.textContent = '澶嶅埗褰撳墠閾炬帴'; }, 1200);
     });
   }
 
@@ -990,3 +1003,7 @@
     renderTestView();
   }
 })();
+
+
+
+
