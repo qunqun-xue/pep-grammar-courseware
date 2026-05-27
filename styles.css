@@ -1,4 +1,4 @@
-:root {
+﻿:root {
   --bg-top: #f6fbff;
   --bg-bottom: #fff6ea;
   --ink-strong: #102f4b;
@@ -278,6 +278,22 @@ button { cursor: pointer; }
   line-height: 1.65;
 }
 
+.section-meta {
+  background: linear-gradient(180deg, #f9fbff, #fff);
+  border-color: #d9e8f5;
+}
+
+.meta-list {
+  margin: 0;
+  padding-left: 20px;
+  display: grid;
+  gap: 8px;
+}
+
+.meta-item {
+  line-height: 1.65;
+}
+
 .teacher-talk-list,
 .rule-list,
 .practice-list,
@@ -305,6 +321,29 @@ button { cursor: pointer; }
   background: linear-gradient(180deg, #fff, #faf7ff);
 }
 
+.teacher-talk-text {
+  margin: 0;
+  color: #213d5a;
+  line-height: 1.7;
+  font-weight: 700;
+}
+
+.teacher-example-list {
+  display: grid;
+  gap: 6px;
+  margin-top: 8px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: #f4f7ff;
+  border: 1px dashed #c9d9f0;
+}
+
+.teacher-example {
+  margin: 0;
+  color: #2e577c;
+  line-height: 1.6;
+}
+
 .section-teachertalk { border-color: #d9caf7; background: linear-gradient(180deg, #faf7ff, #fff); }
 .section-rulecard { background: linear-gradient(180deg, #fffaf0, #fff); }
 .section-pitfallbox { background: linear-gradient(180deg, #fff8f6, #fff); border-color: #f0d3ce; }
@@ -321,6 +360,18 @@ button { cursor: pointer; }
 .pitfall-card,
 .quiz-card {
   padding: 12px;
+}
+
+.lesson-submit-wrap,
+.test-submit-wrap {
+  display: flex;
+  justify-content: center;
+  margin-top: 14px;
+}
+
+.lesson-submit-wrap .submit-btn,
+.test-submit-wrap .submit-btn {
+  min-width: 180px;
 }
 
 .pitfall-label {
@@ -557,3 +608,5 @@ button { cursor: pointer; }
   .test-tab,
   .page-btn { width: 100%; }
 }
+
+
