@@ -334,6 +334,18 @@ body {
   color: #24567a;
 }
 
+.warmup-media {
+  margin: 10px 0;
+}
+
+.warmup-image {
+  width: 100%;
+  border-radius: 12px;
+  border: 1px solid #c7dcf0;
+  background: #f5fbff;
+  display: block;
+}
+
 .chat-list {
   display: grid;
   gap: 6px;
@@ -368,6 +380,21 @@ body {
   border: 1px solid #f2c7c3;
   border-radius: 10px;
   padding: 8px 10px;
+}
+
+.pitfall-intro {
+  border: 1px solid #f3cdc8;
+  border-radius: 10px;
+  background: #fff;
+  padding: 8px 10px;
+  margin-bottom: 10px;
+}
+
+.pit-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 8px;
 }
 
 .section-practice {
@@ -501,6 +528,37 @@ body {
   font-weight: 600;
 }
 
+.exit-list {
+  display: grid;
+  gap: 10px;
+}
+
+.fun-game {
+  border: 1px solid #d8ccf7;
+  border-radius: 12px;
+  background: #fff;
+  padding: 10px;
+  margin-top: 10px;
+}
+
+.fun-title {
+  margin: 0 0 6px;
+  color: #3a2b72;
+  font-weight: 700;
+}
+
+.fun-playground {
+  margin-top: 8px;
+  display: grid;
+  gap: 8px;
+}
+
+.fun-result {
+  margin: 0;
+  color: #1d4e75;
+  font-weight: 600;
+}
+
 .practice-block {
   border: 1px solid #d7dcf2;
   border-radius: 12px;
@@ -580,6 +638,25 @@ body {
 
 .section-rulecard {
   background: #fffaf2;
+}
+
+.section-teachertalk {
+  background: #f6f2ff;
+  border-color: #d9c8fb;
+}
+
+.teacher-talk-list {
+  display: grid;
+  gap: 8px;
+}
+
+.teacher-talk-item {
+  margin: 0;
+  padding: 9px 10px;
+  border-radius: 10px;
+  background: #fff;
+  border: 1px solid #ddd1f7;
+  line-height: 1.65;
 }
 
 .section-pitfallbox {
