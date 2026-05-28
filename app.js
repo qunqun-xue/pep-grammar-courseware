@@ -100,6 +100,11 @@
     return `<section class="section-card section-teachertalk"><h3>老师讲透</h3><p class="section-intro">先把规则讲清，再自己动手练。</p><div class="teacher-talk-list">${bullets(lines).map((t) => `<article class="teacher-talk-item"><p class="teacher-talk-text">${fmt(t)}</p></article>`).join('')}</div></section>`;
   }
 
+  function renderSupplement(title, lines) {
+    const items = bullets(lines);
+    return `<section class="section-card section-supplement"><h3>${esc(title)}</h3><div class="teacher-talk-list">${items.map((t) => `<article class="teacher-talk-item"><p class="teacher-talk-text">${fmt(t)}</p></article>`).join('')}</div></section>`;
+  }
+
   function renderWrongDetail(q, saved) {
     return `<div class="practice-detail"><p><strong>你的答案：</strong>${esc(saved || '未作答')}</p><p><strong>正确答案：</strong>${esc(answerText(q))}</p><p><strong>错误说明：</strong>${esc(questionHint(q))}</p></div>`;
   }
@@ -127,6 +132,9 @@
     const map = lessonSections(lesson);
     const html = [];
     if (map.has('TeacherTalk')) html.push(renderTeacherTalk(lesson, map.get('TeacherTalk')));
+    ['不可数名词用法', '不规则变化'].forEach((heading) => {
+      if (map.has(heading)) html.push(renderSupplement(heading, map.get(heading)));
+    });
     html.push(renderChallenge(lesson));
     if (map.has('ExitTicket')) html.push(renderExit(map.get('ExitTicket')));
     return html.join('');
