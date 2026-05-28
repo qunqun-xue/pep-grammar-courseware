@@ -60,22 +60,6 @@
   const ordered = (lines) => lines.map((l) => l.trim()).map((l) => (l.match(/^\d+\.\s+(.+)/) || [])[1]).filter(Boolean);
   const lessonSections = (lesson) => new Map(parseSections(lesson.markdown).map((s) => [s.heading, s.lines]));
 
-  function collectExamples(lesson) {
-    const out = [];
-    parseSections(lesson.markdown).forEach((sec) => sec.lines.forEach((line) => {
-      const m = line.match(/Example:\s*(.+)/i);
-      if (m) out.push(m[1].trim());
-    }));
-    return out;
-  }
-
-  function pickExamples(examples, idx) {
-    if (!examples.length) return [];
-    const a = examples[(idx * 2) % examples.length];
-    const b = examples[(idx * 2 + 1) % examples.length];
-    return [...new Set([a, b].filter(Boolean))];
-  }
-
   function evaluate(q, val) {
     if (q.type === 'mcq') return Number(val) === Number(q.answer);
     const answers = Array.isArray(q.answers) ? q.answers : [];
@@ -113,11 +97,7 @@
   }
 
   function renderTeacherTalk(lesson, lines) {
-    const examples = collectExamples(lesson);
-    return `<section class="section-card section-teachertalk"><h3>老师讲透</h3><p class="section-intro">先把规则讲清，再看例子，最后自己动手。</p><div class="teacher-talk-list">${bullets(lines).map((t, i) => {
-      const picks = pickExamples(examples, i);
-      return `<article class="teacher-talk-item"><p class="teacher-talk-text">${fmt(t)}</p>${picks.length ? `<div class="teacher-example-list">${picks.map((x) => `<p class="teacher-example">例如：${fmt(x)}</p>`).join('')}</div>` : ''}</article>`;
-    }).join('')}</div></section>`;
+    return `<section class="section-card section-teachertalk"><h3>老师讲透</h3><p class="section-intro">先把规则讲清，再自己动手练。</p><div class="teacher-talk-list">${bullets(lines).map((t) => `<article class="teacher-talk-item"><p class="teacher-talk-text">${fmt(t)}</p></article>`).join('')}</div></section>`;
   }
 
   function renderWrongDetail(q, saved) {
