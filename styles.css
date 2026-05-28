@@ -230,8 +230,7 @@ button { cursor: pointer; }
 .teacher-talk-list,
 .rule-list,
 .practice-list,
-.quiz-list,
-.pitfall-list {
+.quiz-list, {
   display: grid;
   gap: 8px;
 }
@@ -239,7 +238,6 @@ button { cursor: pointer; }
 .teacher-talk-item,
 .rule-item,
 .practice-list li,
-.pitfall-card,
 .quiz-card {
   border-radius: 14px;
   border: 1px solid #dbe7f3;
@@ -279,7 +277,6 @@ button { cursor: pointer; }
 
 .section-teachertalk { border-color: #d9caf7; background: linear-gradient(180deg, #faf7ff, #fff); }
 .section-rulecard { background: linear-gradient(180deg, #fffaf0, #fff); }
-.section-pitfallbox { background: linear-gradient(180deg, #fff8f6, #fff); border-color: #f0d3ce; }
 .section-practice { background: linear-gradient(180deg, #f9fbff, #fff); }
 .section-exitticket { background: linear-gradient(180deg, #eef9ff, #fff); }
 .section-challenge { background: linear-gradient(180deg, #f6fbff, #fff); border-color: #bedaf3; }
@@ -290,7 +287,6 @@ button { cursor: pointer; }
   line-height: 1.65;
 }
 
-.pitfall-card,
 .quiz-card {
   padding: 12px;
 }
@@ -305,20 +301,6 @@ button { cursor: pointer; }
 .lesson-submit-wrap .submit-btn,
 .test-submit-wrap .submit-btn {
   min-width: 180px;
-}
-
-.pitfall-label {
-  margin: 0 0 6px;
-  color: var(--brand-main);
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.pitfall-explain,
-.pitfall-wrong,
-.pitfall-right {
-  margin: 0 0 8px;
-  line-height: 1.65;
 }
 
 .quiz-toolbar {
@@ -423,12 +405,6 @@ button { cursor: pointer; }
 .quiz-feedback.wrong { background: #fff0ef; color: #bb5146; }
 
 .quiz-answer,
-.pitfall-right {
-  margin: 8px 0 0;
-  color: #14557d;
-  font-weight: 700;
-}
-
 .practice-detail {
   margin: 8px 0 0;
   padding: 10px 12px;
@@ -546,3 +522,5 @@ button { cursor: pointer; }
   .test-tab,
   .page-btn { width: 100%; }
 }
+
+

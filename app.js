@@ -1,12 +1,13 @@
 ﻿(function () {
   const lessons = Array.isArray(window.LESSONS) ? window.LESSONS : [];
   const quizBank = window.QUIZ_BANK || {};
+  const testBank = window.TEST_BANK || quizBank;
   if (!lessons.length) {
     document.body.innerHTML = '<p style="padding:20px;">未检测到课程数据，请检查 lessons-data.js。</p>';
     return;
   }
 
-  const LS_PREFIX = 'pep_lesson_state_v8_';
+  const LS_PREFIX = 'pep_lesson_state_v9_';
   const TEST_KEY = 'pep_test_state_v4';
   const WRONG_KEY = 'pep_wrong_bank_v4';
   const TEST_SIZE = 20;
@@ -36,7 +37,7 @@
   const norm = (s) => String(s || '').normalize('NFKC').toLowerCase().replace(/[’'"`.,!?;:，。！？；：（）()\-]/g, '').replace(/\s+/g, '').trim();
   const loadJson = (k, f) => { try { return JSON.parse(localStorage.getItem(k)) || f; } catch { return f; } };
   const saveJson = (k, v) => localStorage.setItem(k, JSON.stringify(v));
-  const loadLessonState = (id) => loadJson(LS_PREFIX + id, { pitfall: {}, practice: {}, challenge: {}, practiceSubmitted: false, submitted: false });
+  const loadLessonState = (id) => loadJson(LS_PREFIX + id, { challenge: {}, submitted: false });
   const saveLessonState = (id, data) => saveJson(LS_PREFIX + id, data);
   const loadTestState = () => loadJson(TEST_KEY, { deck: [], answers: {}, results: {}, submitted: false });
   const saveTestState = (data) => saveJson(TEST_KEY, data);
@@ -119,52 +120,8 @@
     }).join('')}</div></section>`;
   }
 
-  function renderPitfall(lesson, lines) {
-    const st = loadLessonState(lesson.id);
-    const pairs = [];
-    const b = bullets(lines);
-    for (let i = 0; i < b.length; i++) {
-      if (b[i].startsWith('错：')) pairs.push({ wrong: b[i].slice(2).trim(), right: (b[i + 1] || '').startsWith('对：') ? b[i + 1].slice(2).trim() : '' });
-    }
-    if (!pairs.length) return '';
-    return `<section class="section-card section-pitfallbox"><h3>避坑雷达</h3><p class="section-intro">先看易错句，再自己订正。提交后系统会判断是否改对。</p><div class="pitfall-list">${pairs.map((p, idx) => {
-      const saved = st.pitfall[idx]?.answer || '';
-      const submitted = !!st.submitted;
-      const ok = st.pitfall[idx]?.status;
-      const result = submitted ? `<p class="${ok === true ? 'quiz-feedback correct' : 'quiz-feedback wrong'}">${ok === true ? '批改结果：正确' : '批改结果：错误'}</p>${ok === false ? `<div class="practice-detail"><p><strong>你的答案：</strong>${esc(saved || '未作答')}</p><p><strong>正确答案：</strong>${esc(p.right)}</p><p><strong>错误说明：</strong>请对照易错句，检查主语、动词形式、时态、大小写和标点。</p></div>` : ''}` : '';
-      return `<article class="pitfall-card" data-pitfall-index="${idx}" data-right="${attr(p.right)}"><p class="pitfall-label">易错句示例</p><p class="pitfall-wrong">${fmt(p.wrong)}</p><p class="pitfall-label">你来订正</p><textarea class="quiz-textarea pitfall-input" data-answer-input placeholder="请改正句子">${esc(saved)}</textarea>${result}</article>`;
-    }).join('')}</div></section>`;
-  }
-
-  function lessonPracticeDeck(lessonId) {
-    const base = Array.isArray(quizBank[lessonId]) ? quizBank[lessonId] : [];
-    if (!base.length) return [];
-    const out = [];
-    let idx = 0;
-    while (out.length < 6) {
-      const q = base[idx % base.length];
-      out.push({ ...q, id: `practice_${out.length + 1}_${q.id}`, sourceId: q.id, key: `${lessonId}__practice_${out.length + 1}_${q.id}` });
-      idx += 1;
-    }
-    return out;
-  }
-
   function renderWrongDetail(q, saved) {
     return `<div class="practice-detail"><p><strong>你的答案：</strong>${esc(saved || '未作答')}</p><p><strong>正确答案：</strong>${esc(answerText(q))}</p><p><strong>错误说明：</strong>${esc(questionHint(q))}</p></div>`;
-  }
-
-  function renderPractice(lesson) {
-    const qs = lessonPracticeDeck(lesson.id);
-    if (!qs.length) return '';
-    const st = loadLessonState(lesson.id);
-    const submitted = !!st.practiceSubmitted;
-    return `<section class="section-card section-practice"><h3>课后练习</h3><p class="section-intro">6 道题全部完成后，点击底部“提交”统一批改。提交前不会显示答案或批改结果。</p><div class="quiz-list">${qs.map((q, idx) => {
-      const saved = st.practice[q.id]?.answer ?? '';
-      const ok = st.practice[q.id]?.status;
-      const disabled = submitted ? 'disabled' : '';
-      const result = submitted ? `<p class="${ok === true ? 'quiz-feedback correct' : 'quiz-feedback wrong'}">${ok === true ? '批改结果：正确' : '批改结果：错误'}</p>${ok === false ? renderWrongDetail(q, saved) : ''}` : '';
-      return `<article class="quiz-card practice-card" data-practice-id="${attr(q.id)}"><p class="quiz-title">${idx + 1}. ${fmt(q.prompt)}</p>${renderQuestionBody(q, `${lesson.id}_${q.id}`, saved, disabled)}${result}</article>`;
-    }).join('')}</div>${submitted ? '' : '<div class="lesson-submit-wrap"><button type="button" class="page-btn submit-btn" data-practice-submit>提交</button></div>'}</section>`;
   }
 
   function renderExit(lines) {
@@ -190,10 +147,8 @@
     const map = lessonSections(lesson);
     const html = [];
     if (map.has('TeacherTalk')) html.push(renderTeacherTalk(lesson, map.get('TeacherTalk')));
-    if (map.has('PitfallBox')) html.push(renderPitfall(lesson, map.get('PitfallBox')));
-    html.push(renderPractice(lesson));
-    if (map.has('ExitTicket')) html.push(renderExit(map.get('ExitTicket')));
     html.push(renderChallenge(lesson));
+    if (map.has('ExitTicket')) html.push(renderExit(map.get('ExitTicket')));
     return html.join('');
   }
 
@@ -213,55 +168,6 @@
   function bindLessonEvents(lessonId) {
     const lesson = lessons[state.lessonIndex];
     const content = el.lessonContent;
-    content.querySelectorAll('.pitfall-card').forEach((card) => {
-      const idx = Number(card.dataset.pitfallIndex);
-      const input = card.querySelector('[data-answer-input]');
-      input?.addEventListener('input', () => {
-        const st = loadLessonState(lessonId);
-        st.pitfall[idx] = st.pitfall[idx] || {};
-        st.pitfall[idx].answer = input.value;
-        if (st.submitted) {
-          st.submitted = false;
-          Object.keys(st.pitfall).forEach((k) => { if (st.pitfall[k]) delete st.pitfall[k].status; });
-          Object.keys(st.challenge).forEach((k) => { if (st.challenge[k]) delete st.challenge[k].status; });
-        }
-        saveLessonState(lessonId, st);
-      });
-    });
-
-    content.querySelectorAll('.practice-card[data-practice-id]').forEach((card) => {
-      const qid = card.dataset.practiceId;
-      const saveAnswer = () => {
-        const st = loadLessonState(lessonId);
-        st.practice[qid] = st.practice[qid] || {};
-        st.practice[qid].answer = readValue(card);
-        if (st.practiceSubmitted) {
-          st.practiceSubmitted = false;
-          Object.keys(st.practice).forEach((k) => { if (st.practice[k]) delete st.practice[k].status; });
-        }
-        saveLessonState(lessonId, st);
-      };
-      card.querySelectorAll("input[type='radio']").forEach((r) => r.addEventListener('change', saveAnswer));
-      card.querySelector('[data-answer-input]')?.addEventListener('input', saveAnswer);
-    });
-
-    content.querySelector('[data-practice-submit]')?.addEventListener('click', () => {
-      const st = loadLessonState(lessonId);
-      const qs = lessonPracticeDeck(lessonId);
-      st.practiceSubmitted = true;
-      qs.forEach((q) => {
-        const card = content.querySelector(`[data-practice-id='${q.id}']`);
-        const value = card ? readValue(card) : (st.practice[q.id]?.answer || '');
-        st.practice[q.id] = st.practice[q.id] || {};
-        st.practice[q.id].answer = value;
-        st.practice[q.id].status = evaluate(q, value);
-      });
-      saveLessonState(lessonId, st);
-      el.lessonContent.innerHTML = renderLesson(lesson);
-      bindLessonEvents(lessonId);
-      refreshLessonScore();
-    });
-
     content.querySelectorAll('.quiz-card[data-lesson-id]').forEach((card) => {
       const qid = card.dataset.qid;
       const saveAnswer = () => {
@@ -271,7 +177,6 @@
         if (st.submitted) {
           st.submitted = false;
           Object.keys(st.challenge).forEach((k) => { if (st.challenge[k]) delete st.challenge[k].status; });
-          Object.keys(st.pitfall).forEach((k) => { if (st.pitfall[k]) delete st.pitfall[k].status; });
         }
         saveLessonState(lessonId, st);
       };
@@ -283,14 +188,6 @@
       const st = loadLessonState(lessonId);
       const qs = quizBank[lessonId] || [];
       st.submitted = true;
-      content.querySelectorAll('.pitfall-card').forEach((card) => {
-        const idx = Number(card.dataset.pitfallIndex);
-        const value = readValue(card);
-        const right = card.dataset.right || '';
-        st.pitfall[idx] = st.pitfall[idx] || {};
-        st.pitfall[idx].answer = value;
-        st.pitfall[idx].status = norm(value) === norm(right);
-      });
       qs.forEach((q) => {
         const card = content.querySelector(`[data-qid='${q.id}']`);
         const value = card ? readValue(card) : (st.challenge[q.id]?.answer || '');
@@ -337,7 +234,7 @@
 
   function rebuildTestDeck() {
     const all = [];
-    Object.entries(quizBank).forEach(([lessonId, qs]) => (qs || []).forEach((q) => all.push({ ...q, sourceLessonId: lessonId, key: `${lessonId}__${q.id}` })));
+    Object.entries(testBank).forEach(([lessonId, qs]) => (qs || []).forEach((q) => all.push({ ...q, sourceLessonId: lessonId, key: `${lessonId}__${q.id}` })));
     for (let i = all.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [all[i], all[j]] = [all[j], all[i]]; }
     state.deck = all.slice(0, TEST_SIZE);
     saveTestState({ deck: state.deck, answers: {}, results: {}, submitted: false });
@@ -369,7 +266,7 @@
     el.testScore.textContent = '';
     el.clearWrongBtn && (el.clearWrongBtn.hidden = false);
     if (!items.length) {
-      el.testList.innerHTML = `<section class="section-card"><h3>错题集</h3><p>当前还没有错题。你在课程练习或语法测试里做错的题会自动加入这里。</p></section>`;
+      el.testList.innerHTML = `<section class="section-card"><h3>错题集</h3><p>当前还没有错题。你在闯关挑战或语法测试里做错的题会自动加入这里。</p></section>`;
       return;
     }
     el.testList.innerHTML = `<section class="section-card section-wrongbank"><h3>错题集</h3><p class="section-intro">这里保存你做错过的题。可以重新作答，答对后会自动移出。</p><div class="quiz-list">${items.map((q, idx) => `<article class="quiz-card" data-wrong-key="${attr(q.key)}"><p class="quiz-title">${idx + 1}. ${fmt(q.prompt)}</p>${renderQuestionBody(q, `wrong_${q.key}`, q.userAnswer || '', '')}<div class="quiz-actions"><button type="button" class="mini-btn wrong-grade">重新批改</button><button type="button" class="mini-btn light wrong-remove">移出错题集</button></div><p class="quiz-answer">参考答案：${esc(answerText(q))}</p></article>`).join('')}</div></section>`;
@@ -469,3 +366,5 @@
 
   init();
 })();
+
+
